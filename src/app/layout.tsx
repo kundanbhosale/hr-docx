@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { Toaster } from "sonner";
+import HolyLoader from "holy-loader";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import NavBar from "@/components/common/nav";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,7 +33,20 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <NuqsAdapter>
+          <Toaster />
+          <HolyLoader
+            color="hsl(var(--primary))"
+            height={3}
+            speed={250}
+            easing="linear"
+            showSpinner={false}
+          />
+          <TooltipProvider>
+            <NavBar />
+            {children}
+          </TooltipProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );
