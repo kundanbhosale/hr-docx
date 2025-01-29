@@ -48,7 +48,7 @@ export default function TemplateList({
         <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,200px))] justify-center gap-8">
           {data.map((a, i) => (
             <Link href={`/documents/${a.slug}`} key={i} className="">
-              <div className="w-full h-72 bg-muted flex p-4 flex-col justify-between bg-emerald-500">
+              <div className="w-full h-72 flex p-4 flex-col justify-between bg-emerald-500">
                 <span className="font-bold text-start p-2 bg-black text-white">
                   HR DOCX
                 </span>
