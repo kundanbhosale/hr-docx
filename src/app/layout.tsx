@@ -42,10 +42,7 @@ export default function RootLayout({
             easing="linear"
             showSpinner={false}
           />
-          <TooltipProvider>
-            <NavBar />
-            {children}
-          </TooltipProvider>
+          <TooltipProvider>{children}</TooltipProvider>
         </NuqsAdapter>
       </body>
     </html>

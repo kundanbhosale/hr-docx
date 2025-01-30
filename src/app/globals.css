@@ -98,6 +98,25 @@ body {
     transition: #fde047 5000s ease-in-out 0s !important;
     -webkit-box-shadow: 0 0 0px 1000px #fde047 inset;
   }
+  .loader {
+    @apply h-2 my-4 border rounded-full w-48;
+    --c: no-repeat linear-gradient(hsl(var(--primary)) 0 0);
+    background: var(--c), var(--c), hsl(var(--border));
+    background-size: 60% 100%;
+    animation: l16 2s infinite;
+  }
+  @keyframes l16 {
+    0% {
+      background-position: -150% 0, -150% 0;
+    }
+    66% {
+      background-position: 250% 0, -150% 0;
+    }
+    100% {
+      background-position: 250% 0, 250% 0;
+    }
+  }
+
   @media print {
     @page {
       margin: 10mm; /* Adjust margins as needed */

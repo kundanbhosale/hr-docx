@@ -1,5 +1,4 @@
 "use client";
-
 import { DocumentForm } from "./form";
 import React, { useEffect } from "react";
 import { useDocumentStore } from "@/features/documents/store";
@@ -18,10 +17,8 @@ export default function DocPage({
   const { formState, reset } = useDocumentStore();
 
   useEffect(() => {
-    return reset(data?.schema || []);
+    reset(data?.schema || []);
   }, [data]);
-
-  console.log(formState);
 
   const focusedClass = ["node-focused"];
   const router = useRouter();
@@ -82,7 +79,7 @@ export default function DocPage({
           <DocumentForm />
         </div>
       </div>
-      <div className="col-span-3 h-screen relative">
+      <div className="col-span-3  relative">
         {/* <div className="bg-muted h-full w-full border" /> */}
         {formState.length > 0 && (
           <DocumentEditor

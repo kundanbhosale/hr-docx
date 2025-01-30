@@ -10,6 +10,9 @@ const nextConfig = {
   images: {
     remotePatterns: [{ hostname: "images.unsplash.com" }],
   },
+  experimental: {
+    serverComponentsExternalPackages: ["puppeteer-core"],
+  },
 };
 
 export default nextConfig;

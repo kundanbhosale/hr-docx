@@ -1,41 +1,52 @@
 "use client";
-import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AwaitedReturn } from "@/lib/types";
-import { ArrowRight, Plus, Search, Squirrel } from "lucide-react";
+import { Search, Squirrel } from "lucide-react";
 import Link from "next/link";
-import { useQueryState } from "nuqs";
-import { getTemplates } from "../action";
+import { useEffect, useState, useTransition } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { cn } from "@/lib/utils";
+import { getTemplates } from "../action";
+import { AwaitedReturn } from "@/lib/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function TemplateList({
-  data,
-}: {
-  data: AwaitedReturn<typeof getTemplates>;
-}) {
-  const [q, setQ] = useQueryState("q", { shallow: false });
-  const debounced = useDebouncedCallback((value) => {
-    setQ(value);
+export default function TemplateList() {
+  const [list, setList] = useState<AwaitedReturn<typeof getTemplates> | null>(
+    null
+  );
+  const [q, setQ] = useState("");
+  const [pending, startTrans] = useTransition();
+
+  const getList = useDebouncedCallback(() => {
+    console.log("hit");
+
+    startTrans(() => {
+      getTemplates(q).then((t) => setList(t));
+    });
   }, 500);
 
+  useEffect(() => {
+    getList();
+  }, [q]);
+
   return (
-    <div className="max-w-screen-xl m-auto py-14 space-y-12" key={q}>
+    <div className="max-w-screen-xl m-auto py-14 space-y-12">
       <div className="flex justify-center h-40 items-center">
         <Input
           name="search"
+          defaultValue={q}
+          onChange={(e) => setQ(e.target.value)}
+          autoComplete="off"
+          autoCorrect="false"
           icon={<Search />}
-          defaultValue={q || ""}
-          onChange={(e) => debounced(e.currentTarget.value)}
-          className="h-16 w-full text-xl px-6 max-w-xl m-auto"
+          className="h-16 w-full text-xl px-6 m-auto max-w-xl"
           placeholder="Search Documents"
         >
-          <Button size={"icon"}>
+          {/* <Button size={"icon"}>
             <ArrowRight />
-          </Button>
+          </Button> */}
         </Input>
       </div>
-      {data.length === 0 ? (
+
+      {list && list.length === 0 ? (
         <div className="w-full max-w-xl flex flex-col items-center justify-center m-auto">
           <Squirrel className="size-32 mb-8" strokeWidth={1.5} />
           <h1 className="text-4xl mb-4"> No Documents found!</h1>
@@ -46,19 +57,30 @@ export default function TemplateList({
         </div>
       ) : (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,200px))] justify-center gap-8">
-          {data.map((a, i) => (
-            <Link href={`/documents/${a.slug}`} key={i} className="">
-              <div className="w-full h-72 flex p-4 flex-col justify-between bg-emerald-500">
-                <span className="font-bold text-start p-2 bg-black text-white">
-                  HR DOCX
-                </span>
-                <span className="text-start font-semibold text-lg capitalize bottom-0">
-                  {a?.title || ""}
-                </span>
-              </div>
-              <p className="truncate text-base mt-2">{a.title}</p>
-            </Link>
-          ))}
+          {!list || pending ? (
+            <>
+              {[...Array(10)].map((k, i) => (
+                <Skeleton
+                  key={i}
+                  className="w-full h-72 flex p-4 flex-col justify-between "
+                ></Skeleton>
+              ))}
+            </>
+          ) : (
+            list.map((a, i) => (
+              <Link href={`/documents/${a.slug}`} key={i} className="">
+                <div className="w-full h-72 flex p-4 flex-col justify-between bg-emerald-500">
+                  <span className="font-bold text-start p-2 bg-black text-white">
+                    HR DOCX
+                  </span>
+                  <span className="text-start font-semibold text-lg capitalize bottom-0">
+                    {a?.title || ""}
+                  </span>
+                </div>
+                <p className="truncate text-base mt-2">{a.title}</p>
+              </Link>
+            ))
+          )}
         </div>
       )}
     </div>

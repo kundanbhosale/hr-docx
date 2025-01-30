@@ -1,7 +1,6 @@
 "use client";
 import * as React from "react";
 import "@/features/editor/styles/index.css";
-
 import type { Content, Editor } from "@tiptap/react";
 import {
   createExtensions,
@@ -24,8 +23,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useReactToPrint } from "react-to-print";
 import { Button } from "@/components/ui/button";
+import { createPDF } from "../pdf/actions";
+import Loading from "@/components/common/loading";
 
 export interface TiptapProps extends Omit<UseTiptapEditorProps, "onUpdate"> {
   value?: string;
@@ -106,7 +106,8 @@ export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
     const { formState, clearFormUpdates, formUpdates, update, progress } =
       useDocumentStore();
     const [open, setOpen] = React.useState(false);
-
+    const [downloads, setDownloads] = React.useState(0);
+    const [pending, startTransition] = React.useTransition();
     const editor = useTiptapEditor({
       value: value,
       onUpdate: onChange,
@@ -117,10 +118,27 @@ export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
     });
     const contentRef = React.useRef<HTMLDivElement>(null);
 
-    const reactToPrintFn = useReactToPrint({
-      contentRef,
-      bodyClass: "shadow-none border-none rounded-none",
-    });
+    const reactToPrintFn = () => {
+      startTransition(() => {
+        createPDF(value).then((d) => {
+          const byteCharacters = atob(d);
+          const byteNumbers = new Array(byteCharacters.length)
+            .fill(null)
+            .map((_, i) => byteCharacters.charCodeAt(i));
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: "application/pdf" });
+
+          // Create a temporary download link
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = "document.pdf";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          setDownloads((p) => p++);
+        });
+      });
+    };
 
     React.useEffect(() => {
       if (!editor) return;
@@ -139,12 +157,12 @@ export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
     }, [formUpdates]);
 
     React.useEffect(() => {
-      if (progress !== 100) return;
+      if (progress !== 100 || downloads > 0 || pending) return;
       const timer = setTimeout(() => {
         setOpen(true);
-      }, 1000);
+      }, 5000);
       return () => clearTimeout(timer);
-    }, [progress]);
+    }, [progress, pending, downloads]);
 
     if (!editor) {
       return null;
@@ -152,45 +170,53 @@ export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
 
     return (
       <div className={"relative flex-1 flex"}>
-        <Dialog open={open} onOpenChange={(v) => setOpen(v)}>
+        <Dialog open={open || pending} onOpenChange={(v) => setOpen(v)}>
           <DialogContent className="flex items-center justify-center flex-col">
-            <DialogHeader className="flex flex-col items-center justify-center mb-10">
-              <span className="p-4 border bg-emerald-400 rounded-full mb-4">
-                <Check className="size-14" />
-              </span>
-              <DialogTitle className="text-center text-2xl">
-                Your document is ready!
-              </DialogTitle>
-              <DialogDescription className="text-center">
-                Download your document as pdf by clicking on download button
-                below
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex gap-6 w-full">
-              <Button
-                className="w-full text-lg"
-                size={"lg"}
-                variant={"outline"}
-                onClick={() => setOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="w-full text-lg"
-                size={"lg"}
-                onClick={() => reactToPrintFn()}
-              >
-                Download PDF
-              </Button>
-            </div>
+            {pending ? (
+              <div className="w-full h-[300px] bg-white flex items-center justify-center">
+                <Loading title="Downloading..." />
+              </div>
+            ) : (
+              <>
+                <DialogHeader className="flex flex-col items-center justify-center mb-10">
+                  <span className="p-4 border bg-emerald-400 rounded-full mb-4">
+                    <Check className="size-14" />
+                  </span>
+                  <DialogTitle className="text-center text-2xl">
+                    Your document is ready!
+                  </DialogTitle>
+                  <DialogDescription className="text-center">
+                    Download your document as pdf by clicking on download button
+                    below
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex gap-6 w-full">
+                  <Button
+                    className="w-full text-lg"
+                    size={"lg"}
+                    variant={"outline"}
+                    onClick={() => setOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="w-full text-lg"
+                    size={"lg"}
+                    onClick={() => reactToPrintFn()}
+                  >
+                    Download PDF
+                  </Button>
+                </div>
+              </>
+            )}
           </DialogContent>
         </Dialog>
 
-        {progress > 0 && (
+        {progress !== 0 && (
           <div
             className={cn(
-              progress === 100 && "scale-100",
-              "transition-all ease-linear text-muted-white max-w-lg w-1/2 m-auto rounded-full border-2 z-50 h-9 bg-neutral-100 border-emerald-600 overflow-hidden drop-shadow-xl absolute bottom-10 inset-x-0 flex items-center justify-end text-end p-4"
+              progress > 0 && "scale-100",
+              "transition-all ease-linear text-muted-white max-w-lg w-1/2 m-auto rounded-full border-2 z-20 h-9 bg-neutral-100 border-emerald-600 overflow-hidden drop-shadow-xl absolute bottom-10 inset-x-0 flex items-center justify-end text-end p-4"
             )}
           >
             <div
