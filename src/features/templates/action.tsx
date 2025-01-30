@@ -3,21 +3,41 @@ import { db } from "@/_server/db";
 import { templateFormSchema, TemplateFormSchema } from "./schema";
 import { redirect } from "next/navigation";
 import { randomUUID } from "crypto";
-import { Expression, SqlBool } from "kysely";
+import { Expression, sql, SqlBool } from "kysely";
 //
 export const getTemplates = async (search?: string) => {
-  const val = await db
+  let query = db
     .selectFrom("templates")
-    .where((eb) => {
-      const filters: Expression<SqlBool>[] = [];
-      if (search) {
-        filters.push(eb("title", "ilike", `%${search}%`));
-      }
-      return eb.and(filters);
-    })
-    .selectAll()
-    .execute();
-  return val;
+    .select([
+      "content",
+      "created_at",
+      "id",
+      "title",
+      "schema",
+      "slug",
+      "deleted_at",
+    ]);
+
+  if (search) {
+    // If search term exists, add similarity search
+    query = query
+      .select((eb) => [sql<number>`similarity(title, ${search})`.as("score")])
+      .where("deleted_at", "is", null)
+      .where((eb) => sql<boolean>`similarity(title, ${search}) > 0.1`)
+      .orderBy("score", "desc");
+  } else {
+    // If no search, just get recent files
+    query = query
+      .where("deleted_at", "is", null)
+      .orderBy("created_at", "desc")
+      .limit(50);
+  }
+
+  const results = await query.execute();
+
+  console.log(results);
+
+  return results;
 };
 
 export const getSingleTemplate = async ({
