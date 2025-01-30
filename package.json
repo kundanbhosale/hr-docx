@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "pnpm run editor:css && next build",
     "start": "next start",
     "lint": "next lint",
+    "editor:css": "tailwind build -i ./src/features/editor/styles/index.css -o ./public/editor.css",
     "migrate": "bun run src/server/db/migrate.ts",
     "replace-json": "bun --env-file .env.local ./src/scripts/insertJsonTypes ./src/_server/db/types.d.ts",
     "codegen": "kysely-codegen --include-pattern='*' --env-file .env.local --dialect postgres --out-file ./src/_server/db/types.d.ts && pnpm run replace-json"
@@ -41,6 +42,7 @@
     "@radix-ui/react-tooltip": "^1.1.6",
     "@sparticuz/chromium": "^132.0.0",
     "@sparticuz/chromium-min": "121",
+    "@tailwindcss/typography": "^0.5.16",
     "@tanstack/react-table": "^8.20.6",
     "@tiptap/core": "^2.11.2",
     "@tiptap/extension-code-block-lowlight": "^2.11.2",

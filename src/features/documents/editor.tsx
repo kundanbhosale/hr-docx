@@ -120,7 +120,8 @@ export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
 
     const reactToPrintFn = () => {
       startTransition(() => {
-        createPDF(value).then((d) => {
+        const val = editor?.getHTML();
+        createPDF(val).then((d) => {
           const byteCharacters = atob(d);
           const byteNumbers = new Array(byteCharacters.length)
             .fill(null)
@@ -139,7 +140,7 @@ export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
         });
       });
     };
-    console.log(downloads);
+
     React.useEffect(() => {
       if (!editor) return;
 
