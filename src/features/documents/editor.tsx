@@ -135,11 +135,11 @@ export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-          setDownloads((p) => p++);
+          setDownloads((p) => p + 1);
         });
       });
     };
-
+    console.log(downloads);
     React.useEffect(() => {
       if (!editor) return;
 
