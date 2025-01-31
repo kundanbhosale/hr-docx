@@ -1,6 +1,6 @@
 "use client";
 import { DocumentForm } from "./form";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDocumentStore } from "@/features/documents/store";
 import DocumentEditor from "@/features/documents/editor";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ export default function DocPage({
   const [open, setOpen] = React.useState(false);
   const [downloads, setDownloads] = React.useState(0);
   const [pending, startTransition] = React.useTransition();
+  const [key, setKey] = useState(0);
 
   const downloadPDF = () => {
     startTransition(() => {
@@ -49,7 +50,9 @@ export default function DocPage({
     if (data?.schema.length === 0) {
       update({ progress: 100 });
     }
-    return () => reset([]);
+    setKey(new Date().getTime());
+
+    return () => reset(data?.schema || []);
   }, [data]);
 
   const focusedClass = ["node-focused"];
@@ -114,7 +117,7 @@ export default function DocPage({
           <DocumentForm downloadPDF={downloadPDF} />
         </div>
       </div>
-      <div className="col-span-3 flex relative" id="editor">
+      <div className="col-span-3 flex relative" id="editor" key={key}>
         {/* <div className="bg-muted h-full w-full border" /> */}
 
         <DocumentEditor
