@@ -53,7 +53,9 @@ export const useDocumentStore = create<FormState>((set) => ({
         }
         return acc;
       }, 0);
-      const progress = (totalFilledInputs / state.formState.length) * 100;
+      const progress = Math.round(
+        (totalFilledInputs / state.formState.length) * 100
+      );
       return {
         formUpdates: [...state.formUpdates, id],
         formState,
