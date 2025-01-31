@@ -154,14 +154,14 @@ export const DocumentEditor = React.forwardRef<
       });
     }, [formUpdates]);
 
-    React.useEffect(() => {
-      if (progress < 100 || downloads > 0 || pending || formState.length === 0)
-        return;
-      const timer = setTimeout(() => {
-        setOpen(true);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }, [progress, pending, downloads, formState, formUpdates]);
+    // React.useEffect(() => {
+    //   if (progress < 100 || downloads > 0 || pending || formState.length === 0)
+    //     return;
+    //   const timer = setTimeout(() => {
+    //     setOpen(true);
+    //   }, 5000);
+    //   return () => clearTimeout(timer);
+    // }, [progress, pending, downloads, formState, formUpdates]);
 
     if (!editor) {
       return null;

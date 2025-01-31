@@ -99,10 +99,10 @@ export default function DocPage({
   return (
     <div className="grid grid-cols-5">
       <div
-        className="col-span-2 border-r h-screen overflow-y-auto relative"
+        className="col-span-2 border-r h-screen overflow-y-auto relative flex flex-col flex-1"
         id="info-form"
       >
-        <div className="p-8">
+        <div className="p-8 flex flex-col flex-1">
           <div className="flex gap-2 items-center">
             <Button
               className=""
