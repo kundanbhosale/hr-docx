@@ -161,7 +161,7 @@ export const DocumentEditor = React.forwardRef<
         setOpen(true);
       }, 5000);
       return () => clearTimeout(timer);
-    }, [progress, pending, downloads]);
+    }, [progress, pending, downloads, formState, formUpdates]);
 
     if (!editor) {
       return null;
