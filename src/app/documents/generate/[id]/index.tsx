@@ -41,12 +41,15 @@ const DocGenerator = ({
   return (
     <Form {...form}>
       <div className="grid grid-cols-5">
-        <div className="col-span-2 border-r h-screen overflow-y-auto relative">
+        <div
+          className="col-span-2 border-r h-screen overflow-y-auto relative"
+          id="info-form"
+        >
           <div className="p-8">
             <TemplateForm id={id} />
           </div>
         </div>
-        <div className="col-span-3 h-screen relative flex">
+        <div className="col-span-3 h-screen relative flex" id="editor">
           <DocumentEditor
             key={key}
             placeholder="Write something here"

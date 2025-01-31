@@ -5,7 +5,9 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Toaster } from "sonner";
 import HolyLoader from "holy-loader";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import NavBar from "@/components/common/nav";
+import { Onborda, OnbordaProvider } from "onborda";
+import { tourSteps } from "@/features/tour/steps";
+import TourCard from "@/features/tour/card";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,17 +35,28 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NuqsAdapter>
-          <Toaster />
-          <HolyLoader
-            color="hsl(var(--primary))"
-            height={3}
-            speed={250}
-            easing="linear"
-            showSpinner={false}
-          />
-          <TooltipProvider>{children}</TooltipProvider>
-        </NuqsAdapter>
+        <OnbordaProvider>
+          <Onborda
+            steps={tourSteps}
+            showOnborda={true}
+            interact={true}
+            shadowRgb="55,48,163"
+            shadowOpacity="0.8"
+            cardComponent={TourCard}
+          >
+            <NuqsAdapter>
+              <Toaster />
+              <HolyLoader
+                color="hsl(var(--primary))"
+                height={3}
+                speed={250}
+                easing="linear"
+                showSpinner={false}
+              />
+              <TooltipProvider>{children}</TooltipProvider>
+            </NuqsAdapter>
+          </Onborda>
+        </OnbordaProvider>
       </body>
     </html>
   );

@@ -23,6 +23,7 @@ import { TemplateFormSchema } from "@/features/templates/schema";
 import { useTransition } from "react";
 import { createTemplate, updateTemplate } from "@/features/templates/action";
 import { toast } from "sonner";
+import BackBtn from "@/components/common/backBtn";
 
 export function TemplateForm({ id }: { id: string }) {
   const [pending, startTransition] = useTransition();
@@ -67,6 +68,7 @@ export function TemplateForm({ id }: { id: string }) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <BackBtn href="/documents/generate" />
         <FormField
           control={form.control}
           name="title"
@@ -184,7 +186,7 @@ export function TemplateForm({ id }: { id: string }) {
             </div>
           </div>
         </div>
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" disabled={pending} id="generate-btn">
           {id === "new" ? "Create Template" : "Update Template"}
         </Button>
       </form>

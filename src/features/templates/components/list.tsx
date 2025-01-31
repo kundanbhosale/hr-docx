@@ -29,7 +29,7 @@ export default function TemplateList() {
 
   return (
     <div className="max-w-screen-xl m-auto py-14 space-y-12">
-      <div className="flex justify-center h-40 items-center">
+      <div className="flex justify-center h-40 items-center" id="search-input">
         <Input
           name="search"
           defaultValue={q}
@@ -45,44 +45,51 @@ export default function TemplateList() {
           </Button> */}
         </Input>
       </div>
-
-      {list && list.length === 0 ? (
-        <div className="w-full max-w-xl flex flex-col items-center justify-center m-auto">
-          <Squirrel className="size-32 mb-8" strokeWidth={1.5} />
-          <h1 className="text-4xl mb-4"> No Documents found!</h1>
-          <p className="text-base text-center text-muted-foreground">
-            No results were found for your search term &quot;{q}&quot;! Try
-            searching different document.
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,200px))] justify-center gap-8">
-          {!list || pending ? (
-            <>
-              {[...Array(10)].map((k, i) => (
-                <Skeleton
+      <div id="search-results">
+        {list && list.length === 0 ? (
+          <div className="w-full max-w-xl flex flex-col items-center justify-center m-auto">
+            <Squirrel className="size-32 mb-8" strokeWidth={1.5} />
+            <h1 className="text-4xl mb-4">No Documents found!</h1>
+            <p className="text-base text-center text-muted-foreground">
+              No results were found for your search term &quot;{q}&quot;! Try
+              searching different document.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(100px,200px))] justify-center gap-8">
+            {!list || pending ? (
+              <>
+                {[...Array(10)].map((k, i) => (
+                  <Skeleton
+                    key={i}
+                    id={`docs-${i}`}
+                    className="w-full h-72 flex p-4 flex-col justify-between "
+                  ></Skeleton>
+                ))}
+              </>
+            ) : (
+              list.map((a, i) => (
+                <Link
+                  href={`/documents/${a.slug}`}
                   key={i}
-                  className="w-full h-72 flex p-4 flex-col justify-between "
-                ></Skeleton>
-              ))}
-            </>
-          ) : (
-            list.map((a, i) => (
-              <Link href={`/documents/${a.slug}`} key={i} className="">
-                <div className="w-full h-72 flex p-4 flex-col justify-between bg-emerald-500">
-                  <span className="font-bold text-start p-2 bg-black text-white">
-                    HR DOCX
-                  </span>
-                  <span className="text-start font-semibold text-lg capitalize bottom-0">
-                    {a?.title || ""}
-                  </span>
-                </div>
-                <p className="truncate text-base mt-2">{a.title}</p>
-              </Link>
-            ))
-          )}
-        </div>
-      )}
+                  className=""
+                  id={`docs-${i}`}
+                >
+                  <div className="w-full h-72 flex p-4 flex-col justify-between bg-emerald-500">
+                    <span className="font-bold text-start p-2 bg-black text-white">
+                      HR DOCX
+                    </span>
+                    <span className="text-start font-semibold text-lg capitalize bottom-0">
+                      {a?.title || ""}
+                    </span>
+                  </div>
+                  <p className="truncate text-base mt-2">{a.title}</p>
+                </Link>
+              ))
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

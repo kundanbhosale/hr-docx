@@ -8,6 +8,7 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/features/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/hooks/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/onborda/dist/**/*.{js,ts,jsx,tsx}", // Add this
   ],
   theme: {
     extend: {

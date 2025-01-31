@@ -4,7 +4,8 @@ import { templateFormSchema, TemplateFormSchema } from "./schema";
 import { redirect } from "next/navigation";
 import { randomUUID } from "crypto";
 import { Expression, sql, SqlBool } from "kysely";
-//
+import { revalidatePath } from "next/cache";
+
 export const getTemplates = async (search?: string) => {
   let query = db
     .selectFrom("templates")
@@ -83,5 +84,6 @@ export const updateTemplate = async (id: string, data: TemplateFormSchema) => {
 
 export const deleteTemplate = async (id: string) => {
   await db.deleteFrom("templates").where("id", "=", id).execute();
+  revalidatePath("/documents/generate", "page");
   return true;
 };

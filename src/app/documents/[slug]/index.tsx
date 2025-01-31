@@ -8,16 +8,48 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AwaitedReturn } from "@/lib/types";
 import { getSingleTemplate } from "@/features/templates/action";
+import { createPDF } from "@/features/pdf/actions";
 
 export default function DocPage({
   data,
 }: {
   data: AwaitedReturn<typeof getSingleTemplate>;
 }) {
-  const { formState, reset } = useDocumentStore();
+  const { formState, reset, editor, update } = useDocumentStore();
+
+  const [open, setOpen] = React.useState(false);
+  const [downloads, setDownloads] = React.useState(0);
+  const [pending, startTransition] = React.useTransition();
+
+  const downloadPDF = () => {
+    startTransition(() => {
+      const val = editor?.getHTML();
+      createPDF(val).then((d) => {
+        const byteCharacters = atob(d);
+        const byteNumbers = new Array(byteCharacters.length)
+          .fill(null)
+          .map((_, i) => byteCharacters.charCodeAt(i));
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: "application/pdf" });
+
+        // Create a temporary download link
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "document.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setDownloads((p) => p + 1);
+      });
+    });
+  };
 
   useEffect(() => {
     reset(data?.schema || []);
+    if (data?.schema.length === 0) {
+      update({ progress: 100 });
+    }
+    return () => reset([]);
   }, [data]);
 
   const focusedClass = ["node-focused"];
@@ -63,7 +95,10 @@ export default function DocPage({
 
   return (
     <div className="grid grid-cols-5">
-      <div className="col-span-2 border-r h-screen overflow-y-auto relative">
+      <div
+        className="col-span-2 border-r h-screen overflow-y-auto relative"
+        id="info-form"
+      >
         <div className="p-8">
           <div className="flex gap-2 items-center">
             <Button
@@ -76,19 +111,23 @@ export default function DocPage({
             </Button>
             <h1 className="text-3xl">Fill Information</h1>
           </div>
-          <DocumentForm />
+          <DocumentForm downloadPDF={downloadPDF} />
         </div>
       </div>
-      <div className="col-span-3  relative">
+      <div className="col-span-3 flex relative" id="editor">
         {/* <div className="bg-muted h-full w-full border" /> */}
-        {formState.length > 0 && (
-          <DocumentEditor
-            placeholder="Write something here"
-            value={data?.content || ""}
-            suggestionItems={formState}
-            onChange={(e) => console.log(e)}
-          />
-        )}
+
+        <DocumentEditor
+          placeholder="Write something here"
+          value={data?.content || ""}
+          suggestionItems={formState}
+          onChange={(e) => console.log(e)}
+          open={open}
+          setOpen={setOpen}
+          downloads={downloads}
+          downloadPDF={downloadPDF}
+          pending={pending}
+        />
       </div>
     </div>
   );

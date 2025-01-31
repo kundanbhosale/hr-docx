@@ -24,7 +24,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { createPDF } from "../pdf/actions";
 import Loading from "@/components/common/loading";
 
 export interface TiptapProps extends Omit<UseTiptapEditorProps, "onUpdate"> {
@@ -101,13 +100,34 @@ export const useTiptapEditor = ({
   return editor;
 };
 
-export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
-  ({ value, onChange, className, editorContentClassName, ...props }, ref) => {
+export const DocumentEditor = React.forwardRef<
+  HTMLDivElement,
+  TiptapProps & {
+    downloads: any;
+    pending: any;
+    open: any;
+    setOpen: any;
+    downloadPDF: any;
+  }
+>(
+  (
+    {
+      value,
+      onChange,
+      className,
+      editorContentClassName,
+      downloads,
+      pending,
+      open,
+      setOpen,
+      downloadPDF,
+      ...props
+    },
+    ref
+  ) => {
     const { formState, clearFormUpdates, formUpdates, update, progress } =
       useDocumentStore();
-    const [open, setOpen] = React.useState(false);
-    const [downloads, setDownloads] = React.useState(0);
-    const [pending, startTransition] = React.useTransition();
+
     const editor = useTiptapEditor({
       value: value,
       onUpdate: onChange,
@@ -117,29 +137,6 @@ export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
       ...props,
     });
     const contentRef = React.useRef<HTMLDivElement>(null);
-
-    const reactToPrintFn = () => {
-      startTransition(() => {
-        const val = editor?.getHTML();
-        createPDF(val).then((d) => {
-          const byteCharacters = atob(d);
-          const byteNumbers = new Array(byteCharacters.length)
-            .fill(null)
-            .map((_, i) => byteCharacters.charCodeAt(i));
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: "application/pdf" });
-
-          // Create a temporary download link
-          const link = document.createElement("a");
-          link.href = URL.createObjectURL(blob);
-          link.download = "document.pdf";
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          setDownloads((p) => p + 1);
-        });
-      });
-    };
 
     React.useEffect(() => {
       if (!editor) return;
@@ -158,7 +155,8 @@ export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
     }, [formUpdates]);
 
     React.useEffect(() => {
-      if (progress !== 100 || downloads > 0 || pending) return;
+      if (progress < 100 || downloads > 0 || pending || formState.length === 0)
+        return;
       const timer = setTimeout(() => {
         setOpen(true);
       }, 5000);
@@ -203,7 +201,7 @@ export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
                   <Button
                     className="w-full text-lg"
                     size={"lg"}
-                    onClick={() => reactToPrintFn()}
+                    onClick={() => downloadPDF()}
                   >
                     Download PDF
                   </Button>
@@ -216,8 +214,8 @@ export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
         {progress !== 0 && (
           <div
             className={cn(
-              progress > 0 && "scale-100",
-              "transition-all ease-linear text-muted-white max-w-lg w-1/2 m-auto rounded-full border-2 z-20 h-9 bg-neutral-100 border-emerald-600 overflow-hidden drop-shadow-xl absolute bottom-10 inset-x-0 flex items-center justify-end text-end p-4"
+              progress >= 100 && "scale-125",
+              "transition-all ease-linear text-muted-white max-w-lg w-1/2 m-auto rounded-full border-2 z-20 h-9 bg-neutral-100 border-emerald-600 overflow-hidden drop-shadow-xl absolute bottom-[10%] inset-x-0 flex items-center justify-end text-end p-4"
             )}
           >
             <div
@@ -242,7 +240,7 @@ export const DocumentEditor = React.forwardRef<HTMLDivElement, TiptapProps>(
                   </p>
                 </div>
                 <a
-                  onClick={() => reactToPrintFn()}
+                  onClick={() => downloadPDF()}
                   className="px-4 py-1.5 h-7 flex justify-center items-center bg-white rounded-l-full w-fit cursor-pointer hover:bg-black hover:text-white transition-all ease-linear"
                 >
                   <span>

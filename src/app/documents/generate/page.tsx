@@ -11,7 +11,7 @@ const Page = async () => {
 
       <div className="p-8 space-y-12">
         <div className="flex gap-4 items-center">
-          <BackBtn />
+          <BackBtn href="/" />
           <h1 className="text-4xl">All Templates</h1>
         </div>
         <TemplatesTable data={data} />

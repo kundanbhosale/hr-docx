@@ -18,11 +18,11 @@ interface FormState {
 const initialData = {
   editor: null,
   formUpdates: [],
+  formState: [],
+  progress: 0,
 };
 export const useDocumentStore = create<FormState>((set) => ({
   ...initialData,
-  formState: [],
-  progress: 0,
   update: (data) => set(data),
   reset: (formState) =>
     set({
