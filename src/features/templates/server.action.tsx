@@ -15,6 +15,7 @@ import { hasPermission } from "../auth/server/actions";
 import { redirect, RedirectType } from "next/navigation";
 import { z } from "zod";
 import { Groups, Templates } from "@/_server/db/types";
+import { revalidatePath } from "next/cache";
 
 export const getPublicTemplates = action(async (props: { search: string }) => {
   const { search } = z.object({ search: z.string() }).parse(props);
@@ -148,6 +149,6 @@ export const updateTemplate = action(
 export const deleteTemplate = action(async (id: string) => {
   await hasPermission(undefined, "internal");
   await db.deleteFrom("templates").where("id", "=", id).execute();
-  // revalidatePath("/documents/generate", "page");
+  revalidatePath("/admin/category/[slug]", "page");
   return true;
 });

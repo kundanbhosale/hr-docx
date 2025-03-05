@@ -22,6 +22,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import slugify from "slugify";
+import { revalidatePath } from "next/cache";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   name: z.string().min(2).max(200),
@@ -37,7 +39,7 @@ type SchemaType = z.infer<typeof schema>;
 
 const CreateOrgForm = ({ onSubmit }: { onSubmit: () => void }) => {
   const [pending, setTrans] = useTransition();
-
+  const router = useRouter();
   const form = useForm<SchemaType>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -51,8 +53,19 @@ const CreateOrgForm = ({ onSubmit }: { onSubmit: () => void }) => {
       onSubmit();
       toast.promise(authClient.organization.create(values), {
         loading: "Creating Organization...",
-        success: "Successfully created organization",
-        error: "Error creating organization",
+        success: async (data) => {
+          if (data.error) {
+            throw data.error;
+          }
+          await authClient.organization
+            .setActive({ organizationSlug: data.data?.slug })
+            .then(() => {
+              router.push("/app");
+            });
+
+          return "Successfully created organization";
+        },
+        error: (e) => e.message || "Error creating organization",
       });
     });
   }

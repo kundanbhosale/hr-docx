@@ -64,7 +64,7 @@ export default function TemplatesTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((d, i) => (
+          {data?.data?.map((d, i) => (
             <TableRow key={i} className={cn("cursor-pointer")}>
               <TableCell
                 onClick={() =>

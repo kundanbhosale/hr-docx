@@ -1,13 +1,14 @@
 import React, { ReactNode, useTransition } from "react";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
 import { useForm } from "react-hook-form";
 import {
@@ -33,8 +34,10 @@ import { AwaitedReturn } from "@/lib/types";
 import { getAllPublicCategories } from "./server.action";
 import {
   createCategory,
+  deleteCategory,
   updateCategory,
 } from "@/app/admin/(admin-layout)/category/[slug]/sever.action";
+import { cn } from "@/lib/utils";
 
 const CategoryForm = ({
   data,
@@ -61,6 +64,17 @@ const CategoryForm = ({
         loading: "Submitting...",
         success: `Successfully ${d?.id ? "updated" : "created"} category!`,
         error: `Failed to ${d?.id ? "update" : "create"} category!`,
+      });
+    });
+  };
+
+  const handleDelete = () => {
+    if (!data?.id) return;
+    startTrans(() => {
+      toast.promise(deleteCategory({ id: data?.id }), {
+        loading: "Deleting...",
+        success: `Successfully deleted category!`,
+        error: `Failed to delete category!`,
       });
     });
   };
@@ -96,7 +110,10 @@ const CategoryForm = ({
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            <form
+              onSubmit={form.handleSubmit(onSubmit as never)}
+              className="space-y-5"
+            >
               <FormField
                 control={form.control}
                 name="title"
@@ -158,9 +175,21 @@ const CategoryForm = ({
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={pending}>
-                {data?.id ? "Update" : "Create"} Category
-              </Button>
+              <div className="space-x-4 flex justify-end">
+                {data?.id && (
+                  <DialogClose
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={pending}
+                    className={cn(buttonVariants({ variant: "secondary" }))}
+                  >
+                    Delete
+                  </DialogClose>
+                )}
+                <Button type="submit" disabled={pending}>
+                  {data?.id ? "Update" : "Create"} Category
+                </Button>
+              </div>
             </form>
           </Form>
         </DialogContent>

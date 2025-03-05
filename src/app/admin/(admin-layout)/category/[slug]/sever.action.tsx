@@ -4,10 +4,13 @@ import { hasPermission } from "@/features/auth/server/actions";
 import {
   createCategorySchema,
   CreateCategorySchema,
+  DeleteCategorySchema,
+  deleteCategorySchema,
   updateCategorySchema,
   UpdateCategorySchema,
 } from "@/features/categories/schema";
-import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { redirect, RedirectType } from "next/navigation";
 import { randomUUID } from "node:crypto";
 
 export const createCategory = async (props: CreateCategorySchema) => {
@@ -27,7 +30,7 @@ export const createCategory = async (props: CreateCategorySchema) => {
     .returning("id")
     .executeTakeFirstOrThrow();
 
-  return redirect("/category/" + c.id);
+  return redirect("category/" + c.id);
 };
 
 export const updateCategory = async (props: UpdateCategorySchema) => {
@@ -41,4 +44,13 @@ export const updateCategory = async (props: UpdateCategorySchema) => {
     .executeTakeFirstOrThrow();
 
   return true;
+};
+
+export const deleteCategory = async (props: DeleteCategorySchema) => {
+  const { id } = deleteCategorySchema.parse(props);
+  await hasPermission(undefined, "internal");
+
+  await db.deleteFrom("groups").where("id", "=", id).executeTakeFirstOrThrow();
+  revalidatePath("/admin/category", "layout");
+  return redirect("/admin/category/un-categorized", RedirectType.replace);
 };

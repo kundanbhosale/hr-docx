@@ -1,10 +1,12 @@
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { getSingleCategory } from "@/features/categories/server.action";
 import { getTemplates } from "@/features/templates/server.action";
 import { cn } from "@/lib/utils";
-import { Plus } from "lucide-react";
+import { Delete, Plus, Trash } from "lucide-react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import React from "react";
+import TemplatesTable from "./table";
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const slug = (await params).slug;
@@ -14,7 +16,9 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { data: cat } =
     slug === "un-categorized"
       ? { data: { title: "Un Categorized", color: "#ddd" } }
-      : await getSingleCategory({ slug });
+      : await getSingleCategory({ slug }).catch(() => {
+          return notFound();
+        });
   return (
     <div className="p-4">
       <div
@@ -33,15 +37,24 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
           Create Template
         </Link>
       </div>
-      {data.data?.map((d, i) => (
-        <Link
-          href={"/admin/template/" + d.id}
+      {/* {data.data?.map((d, i) => (
+        <div
           key={i}
-          className="p-2 hover:bg-muted block border-b last:border-none"
+          className="flex justify-between border-b last:border-none p-2"
         >
-          <p>{d.title}</p>
-        </Link>
-      ))}
+          <Link
+            href={"/admin/template/" + d.id}
+            key={i}
+            className="hover:bg-muted block"
+          >
+            <p>{d.title}</p>
+          </Link>
+          <Button variant={"outline"} size="icon" className="size-8">
+            <Trash />
+          </Button>
+        </div>
+      ))} */}
+      <TemplatesTable data={data} />
     </div>
   );
 };
