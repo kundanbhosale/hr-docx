@@ -128,6 +128,7 @@ export const createTemplate = action(async (data: TemplateFormSchema) => {
     .insertInto("templates")
     .values({ id, ...parsed, created_by: user.id })
     .execute();
+  revalidatePath("/admin/category/[slug]", "page");
   redirect(id, RedirectType.replace);
   return { id };
 });
@@ -142,6 +143,8 @@ export const updateTemplate = action(
       .set(parsed)
       .where("id", "=", id)
       .execute();
+    revalidatePath("/admin/template/[id]", "layout");
+
     return true;
   }
 );

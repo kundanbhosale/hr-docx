@@ -68,14 +68,16 @@ export default function TemplatesTable({
             <TableRow key={i} className={cn("cursor-pointer")}>
               <TableCell
                 onClick={() =>
-                  !deletes.includes(d.id) && router.push(`generate/${d.id}`)
+                  !deletes.includes(d.id) &&
+                  router.push(`/admin/template/${d.id}`)
                 }
               >
                 {d.title}
               </TableCell>
               <TableCell
                 onClick={() =>
-                  !deletes.includes(d.id) && router.push(`generate/${d.id}`)
+                  !deletes.includes(d.id) &&
+                  router.push(`/admin/template/${d.id}`)
                 }
               >
                 {formatRelative(new Date(d.created_at || ""), new Date())}
