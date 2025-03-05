@@ -10,10 +10,8 @@ export default function GlobalError({
   reset: () => void;
 }) {
   return (
-    <html>
-      <body style={{ display: "flex", height: "100vh" }}>
-        <ErrorPage error={error} reset={reset} />
-      </body>
-    </html>
+    <div className="h-screen flex">
+      <ErrorPage error={error} reset={reset} />
+    </div>
   );
 }
