@@ -27,12 +27,11 @@ export const hasPermission = cache(
 
     if (type === "internal") {
       const domain = session.user.email.split("@")[1];
-
+      console.log("Is a staff?", env.STAFF_DOMAIN, domain);
       if (env.STAFF_DOMAIN === "ignore") {
         return session;
       } else if (!env.STAFF_DOMAIN?.includes(domain))
-        console.log("Not a staff", env.STAFF_DOMAIN, domain);
-      throw Error("Permission denied!");
+        throw Error("Permission denied!");
     } else {
       const result = await auth.api.hasPermission({
         headers: await headers(),
