@@ -16,7 +16,7 @@ export default function PageClient() {
   const handleOrg = async (organizationSlug: string) => {
     startTrans(async () => {
       await authClient.organization.setActive({ organizationSlug }).then(() => {
-        router.push("/app");
+        router.push("/");
       });
     });
   };

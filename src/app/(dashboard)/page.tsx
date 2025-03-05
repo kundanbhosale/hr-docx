@@ -65,7 +65,7 @@ function Docs() {
       </h1>
       <div className="grid grid-cols-4 gap-8 rounded-md">
         <Link
-          href={"app/document/create"}
+          href={"/document/create"}
           className="border flex items-center justify-center flex-1"
         >
           <Plus className="size-8" />

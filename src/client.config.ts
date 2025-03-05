@@ -37,12 +37,12 @@ export const adminNavs = {
   secondary: [
     {
       label: "Dashboard",
-      url: "/app",
+      url: "/",
       icon: ArrowLeftCircle,
     },
     {
       label: "My Profile",
-      url: "/app/account",
+      url: "/account",
       icon: User,
     },
     {
@@ -57,22 +57,22 @@ export const dashboardNavs = {
   primary: [
     {
       label: "My Dashboard",
-      url: "/app",
+      url: "/",
       icon: LayoutDashboard,
     },
     {
       label: "My Document",
-      url: "/app/documents",
+      url: "/documents",
       icon: FileText,
     },
     {
       label: "Templates",
-      url: "/app/templates",
+      url: "/templates",
       icon: Layers,
     },
     {
       label: "My Profile",
-      url: "/app/account",
+      url: "/account",
       icon: CircleUser,
     },
     // {

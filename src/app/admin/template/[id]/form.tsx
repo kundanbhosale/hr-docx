@@ -30,6 +30,7 @@ import { SelectCategory } from "@/features/categories/client.combobox";
 import slugify from "slugify";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import MultipleSelector, { Option } from "@/components/ui/multi-select";
+import { randomUUID } from "crypto";
 
 const variables = [
   {
@@ -146,13 +147,12 @@ export function TemplateForm({ id }: { id: string }) {
       const field = fields.find((f) => s.value === f.id);
       if (!field) {
         const item = variables.find((f) => f.id === s.value);
-        if (!item) return;
         append(
           {
-            id: item.id,
-            desc: item.desc,
-            title: item.label,
-            type: item.type as any,
+            id: item?.id || s.value,
+            desc: item?.desc || "",
+            title: item?.label || s.label,
+            type: (item?.type as any) || "text",
             value: "",
           },
           {

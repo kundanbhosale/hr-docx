@@ -23,7 +23,7 @@ export const DashboardLayout = ({
   useEffect(() => {
     Object.keys(navs).map((k) => {
       navs[k as keyof typeof navs].map((e) => {
-        if (path === e.url) {
+        if ((path || "/") === e.url) {
           setActive(e.url);
         }
       });

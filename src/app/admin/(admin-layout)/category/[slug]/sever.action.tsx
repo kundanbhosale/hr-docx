@@ -27,10 +27,10 @@ export const createCategory = async (props: CreateCategorySchema) => {
       color,
       is_public: true,
     })
-    .returning("id")
+    .returning("slug")
     .executeTakeFirstOrThrow();
 
-  return redirect("category/" + c.id);
+  return redirect(c.slug);
 };
 
 export const updateCategory = async (props: UpdateCategorySchema) => {

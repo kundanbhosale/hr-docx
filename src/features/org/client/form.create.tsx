@@ -60,7 +60,7 @@ const CreateOrgForm = ({ onSubmit }: { onSubmit: () => void }) => {
           await authClient.organization
             .setActive({ organizationSlug: data.data?.slug })
             .then(() => {
-              router.push("/app");
+              router.push("/");
             });
 
           return "Successfully created organization";

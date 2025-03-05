@@ -27,7 +27,6 @@ export const hasPermission = cache(
 
     if (type === "internal") {
       const domain = session.user.email.split("@")[1];
-      console.log("Is a staff?", env.STAFF_DOMAIN, domain);
       if (env.STAFF_DOMAIN === "ignore") {
         return session;
       } else if (!env.STAFF_DOMAIN?.includes(domain))

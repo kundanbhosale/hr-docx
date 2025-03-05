@@ -6,7 +6,7 @@ export const authMiddleware = createAuthMiddleware(async (ctx) => {
   if (!newSession) return;
 
   if (!newSession.session.activeOrganizationId)
-    return redirect("/app/org", RedirectType.replace);
+    return redirect("/org", RedirectType.replace);
 
   return;
 });
