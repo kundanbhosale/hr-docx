@@ -1,5 +1,4 @@
 import { LoginForm } from "@/features/auth/client/comp.login";
-import { GalleryVerticalEnd } from "lucide-react";
 import Image from "next/image";
 import { Suspense } from "react";
 export default function LoginPage() {
