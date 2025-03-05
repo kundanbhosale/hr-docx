@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Lexend_Deca } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Toaster } from "sonner";
@@ -8,17 +8,9 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Onborda, OnbordaProvider } from "onborda";
 import { tourSteps } from "@/features/tour/steps";
 import TourCard from "@/features/tour/card";
+import QueryProvider from "@/contexts/queryProvider";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+const font = Lexend_Deca({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -32,31 +24,31 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <OnbordaProvider>
-          <Onborda
-            steps={tourSteps}
-            showOnborda={true}
-            interact={true}
-            shadowRgb="55,48,163"
-            shadowOpacity="0.8"
-            cardComponent={TourCard}
-          >
-            <NuqsAdapter>
-              <Toaster />
-              <HolyLoader
-                color="hsl(var(--primary))"
-                height={3}
-                speed={250}
-                easing="linear"
-                showSpinner={false}
-              />
-              <TooltipProvider>{children}</TooltipProvider>
-            </NuqsAdapter>
-          </Onborda>
-        </OnbordaProvider>
+      <body className={`${font.className} antialiased`}>
+        <QueryProvider>
+          <OnbordaProvider>
+            <Onborda
+              steps={tourSteps}
+              showOnborda={true}
+              interact={true}
+              shadowRgb="55,48,163"
+              shadowOpacity="0.8"
+              cardComponent={TourCard}
+            >
+              <NuqsAdapter>
+                <Toaster />
+                <HolyLoader
+                  color="hsl(var(--primary))"
+                  height={3}
+                  speed={250}
+                  easing="linear"
+                  showSpinner={false}
+                />
+                <TooltipProvider>{children}</TooltipProvider>
+              </NuqsAdapter>
+            </Onborda>
+          </OnbordaProvider>
+        </QueryProvider>
       </body>
     </html>
   );

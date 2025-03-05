@@ -1,7 +1,7 @@
 import React from "react";
 import DocPage from ".";
 import { notFound } from "next/navigation";
-import { getSingleTemplate } from "@/features/templates/action";
+import { getSingleTemplate } from "@/features/templates/server.action";
 
 export default async function page({ params }: { params: { slug: string } }) {
   if (!params.slug) notFound();

@@ -10,7 +10,7 @@ import {
   TemplateFormSchema,
 } from "@/features/templates/schema";
 import { AwaitedReturn } from "@/lib/types";
-import { getSingleTemplate } from "@/features/templates/action";
+import { getSingleTemplate } from "@/features/templates/server.action";
 
 const DocGenerator = ({
   id,

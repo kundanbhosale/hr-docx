@@ -1,6 +1,6 @@
 import React from "react";
 import DocGenerator from "./";
-import { getSingleTemplate } from "@/features/templates/action";
+import { getSingleTemplate } from "@/features/templates/server.action";
 import { AwaitedReturn } from "@/lib/types";
 
 const Page = async ({ params }: { params: { id: string } }) => {

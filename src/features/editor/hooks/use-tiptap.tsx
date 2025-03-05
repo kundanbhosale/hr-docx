@@ -3,6 +3,8 @@ import { StarterKit } from "@tiptap/starter-kit";
 import { Typography } from "@tiptap/extension-typography";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { Underline } from "@tiptap/extension-underline";
+import TextAlign from "@tiptap/extension-text-align";
+
 import { TextStyle } from "@tiptap/extension-text-style";
 import {
   Link,
@@ -163,6 +165,9 @@ export const createExtensions = (
   HorizontalRule,
   ResetMarksOnEnter,
   CodeBlockLowlight,
+  TextAlign.configure({
+    types: ["heading", "paragraph", "image"],
+  }),
   Placeholder.configure({ placeholder: () => placeholder }),
   Variable.configure({
     HTMLAttributes: {

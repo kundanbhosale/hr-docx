@@ -2,7 +2,14 @@ import * as React from "react";
 import type { Editor } from "@tiptap/react";
 import type { toggleVariants } from "@/components/ui/toggle";
 import type { VariantProps } from "class-variance-authority";
-import { ChevronDown, CheckIcon } from "lucide-react";
+import {
+  ChevronDown,
+  CheckIcon,
+  AlignJustify,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+} from "lucide-react";
 import { ToolbarButton } from "../toolbar-button";
 import {
   Popover,
@@ -165,49 +172,140 @@ export const SectionThree: React.FC<SectionThreeProps> = ({
   }, [color]);
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <ToolbarButton
-          tooltip="Text color"
-          aria-label="Text color"
-          className="w-12"
-          size={size}
-          variant={variant}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="size-5"
-            style={{ color: selectedColor }}
+    <>
+      <Popover>
+        <PopoverTrigger asChild>
+          <ToolbarButton
+            tooltip="Text color"
+            aria-label="Text color"
+            className="w-12"
+            size={size}
+            variant={variant}
           >
-            <path d="M4 20h16" />
-            <path d="m6 16 6-12 6 12" />
-            <path d="M8 12h8" />
-          </svg>
-          <ChevronDown className="size-5" />
-        </ToolbarButton>
-      </PopoverTrigger>
-      <PopoverContent align="start" className="w-full">
-        <div className="space-y-1.5">
-          {COLORS.map((palette, index) => (
-            <MemoizedColorPicker
-              key={index}
-              palette={palette}
-              inverse={palette.inverse}
-              selectedColor={selectedColor}
-              onColorChange={handleColorChange}
-            />
-          ))}
-        </div>
-      </PopoverContent>
-    </Popover>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="size-5"
+              style={{ color: selectedColor }}
+            >
+              <path d="M4 20h16" />
+              <path d="m6 16 6-12 6 12" />
+              <path d="M8 12h8" />
+            </svg>
+            <ChevronDown className="size-5" />
+          </ToolbarButton>
+        </PopoverTrigger>
+        <PopoverContent align="start" className="w-full">
+          <div className="space-y-1.5">
+            {COLORS.map((palette, index) => (
+              <MemoizedColorPicker
+                key={index}
+                palette={palette}
+                inverse={palette.inverse}
+                selectedColor={selectedColor}
+                onColorChange={handleColorChange}
+              />
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+      <Popover>
+        <PopoverTrigger asChild>
+          <ToolbarButton
+            tooltip="Align"
+            aria-label="align"
+            className="w-12"
+            size={size}
+            variant={variant}
+          >
+            <AlignJustify />
+            <ChevronDown className="size-5" />
+          </ToolbarButton>
+        </PopoverTrigger>
+        <PopoverContent align="start" className="w-full p-1 m-0">
+          <div>
+            {/* <button
+              onClick={() => editor.chain().focus().setTextAlign("left").run()}
+              className={
+                editor.isActive({ textAlign: "left" }) ? "is-active" : ""
+              }
+            >
+              <Align>
+            </button> */}
+            <ToolbarButton
+              tooltip="Align Left"
+              aria-label="align-left"
+              className="w-12"
+              size={size}
+              onClick={() => editor.chain().focus().setTextAlign("left").run()}
+              isActive={editor.isActive({ textAlign: "left" })}
+              variant={variant}
+            >
+              <AlignLeft />
+            </ToolbarButton>
+            <ToolbarButton
+              tooltip="Align Center"
+              aria-label="align-center"
+              className="w-12"
+              size={size}
+              onClick={() =>
+                editor.chain().focus().setTextAlign("center").run()
+              }
+              isActive={editor.isActive({ textAlign: "center" })}
+              variant={variant}
+            >
+              <AlignCenter />
+            </ToolbarButton>
+            <ToolbarButton
+              tooltip="Align Right"
+              aria-label="align-right"
+              className="w-12"
+              size={size}
+              onClick={() => editor.chain().focus().setTextAlign("right").run()}
+              isActive={editor.isActive({ textAlign: "right" })}
+              variant={variant}
+            >
+              <AlignRight />
+            </ToolbarButton>
+            <ToolbarButton
+              tooltip="Align Justify"
+              aria-label="align-justify"
+              className="w-12"
+              size={size}
+              onClick={() =>
+                editor.chain().focus().setTextAlign("justify").run()
+              }
+              isActive={editor.isActive({ textAlign: "justify" })}
+              variant={variant}
+            >
+              <AlignJustify />
+            </ToolbarButton>
+            {/* <ToolbarButton
+              tooltip="Align Unset"
+              aria-label="align-unset"
+              className="w-12"
+              size={size}
+              onClick={() => editor.chain().focus().unsetTextAlign().run()}
+              variant={variant}
+            >
+              < />
+            </ToolbarButton>
+            <button
+              onClick={() => editor.chain().focus().unsetTextAlign().run()}
+            >
+              Unset text align
+            </button> */}
+          </div>
+        </PopoverContent>
+      </Popover>
+    </>
   );
 };
 

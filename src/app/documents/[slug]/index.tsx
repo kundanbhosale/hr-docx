@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AwaitedReturn } from "@/lib/types";
-import { getSingleTemplate } from "@/features/templates/action";
+import { getSingleTemplate } from "@/features/templates/server.action";
 import { createPDF } from "@/features/pdf/actions";
 
 export default function DocPage({

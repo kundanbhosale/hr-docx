@@ -8,7 +8,11 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    remotePatterns: [{ hostname: "images.unsplash.com" }],
+    remotePatterns: [
+      { hostname: "images.unsplash.com" },
+      { hostname: "api.dicebear.com" },
+      { hostname: "lh3.googleusercontent.com" },
+    ],
   },
   experimental: {
     serverComponentsExternalPackages: ["puppeteer-core"],

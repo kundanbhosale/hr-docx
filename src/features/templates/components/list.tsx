@@ -4,7 +4,7 @@ import { Search, Squirrel } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { getTemplates } from "../action";
+import { getTemplates } from "../server.action";
 import { AwaitedReturn } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 

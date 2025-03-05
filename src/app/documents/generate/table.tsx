@@ -8,7 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { deleteTemplate, getTemplates } from "@/features/templates/action";
+import {
+  deleteTemplate,
+  getTemplates,
+} from "@/features/templates/server.action";
 import { AwaitedReturn } from "@/lib/types";
 import { formatRelative } from "date-fns";
 import { RefreshCw, Trash } from "lucide-react";

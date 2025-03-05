@@ -31,17 +31,134 @@ export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
-export interface Templates {
+export interface AuthAccounts {
+  accessToken: string | null;
+  accessTokenExpiresAt: Timestamp | null;
+  accountId: string;
+  createdAt: Timestamp;
+  id: string;
+  idToken: string | null;
+  password: string | null;
+  providerId: string;
+  refreshToken: string | null;
+  refreshTokenExpiresAt: Timestamp | null;
+  scope: string | null;
+  updatedAt: Timestamp;
+  userId: string;
+}
+
+export interface AuthSessions {
+  activeOrganizationId: string | null;
+  createdAt: Timestamp;
+  expiresAt: Timestamp;
+  id: string;
+  ipAddress: string | null;
+  token: string;
+  updatedAt: Timestamp;
+  userAgent: string | null;
+  userId: string;
+}
+
+export interface AuthUsers {
+  createdAt: Timestamp;
+  email: string;
+  emailVerified: boolean;
+  id: string;
+  image: string | null;
+  name: string;
+  updatedAt: Timestamp;
+}
+
+export interface AuthVerifications {
+  createdAt: Timestamp | null;
+  expiresAt: Timestamp;
+  id: string;
+  identifier: string;
+  updatedAt: Timestamp | null;
+  value: string;
+}
+
+export interface Documents {
   content: string;
   created_at: Generated<Timestamp | null>;
+  created_by: string;
+  deleted_at: Timestamp | null;
+  downloads: Generated<number>;
+  id: string;
+  org: string;
+  schema: Generated<ArrayType<Json>>;
+  starred: Generated<boolean>;
+  template: string | null;
+  template_version: Generated<number>;
+  title: string | null;
+  updated_at: Timestamp | null;
+}
+
+export interface Groups {
+  color: string | null;
+  created_at: Generated<Timestamp | null>;
+  created_by: string;
   deleted_at: Timestamp | null;
   id: string;
-  schema: Generated<ArrayType<Json>>;
+  is_public: Generated<boolean | null>;
   slug: string;
   thumbnail: string | null;
   title: string;
+  updated_at: Timestamp | null;
+}
+
+export interface OrgsInvitation {
+  email: string;
+  expiresAt: Timestamp;
+  id: string;
+  inviterId: string;
+  organizationId: string;
+  role: string | null;
+  status: string;
+}
+
+export interface OrgsList {
+  createdAt: Timestamp;
+  id: string;
+  logo: string | null;
+  metadata: string | null;
+  name: string;
+  slug: string;
+}
+
+export interface OrgsMember {
+  createdAt: Timestamp;
+  id: string;
+  organizationId: string;
+  role: string;
+  userId: string;
+}
+
+export interface Templates {
+  content: string;
+  created_at: Generated<Timestamp | null>;
+  created_by: string;
+  deleted_at: Timestamp | null;
+  group: string | null;
+  id: string;
+  is_public: Generated<boolean | null>;
+  schema: Generated<ArrayType<Json>>;
+  slug: string;
+  template_version: Generated<number>;
+  thumbnail: string | null;
+  title: string;
+  updated_at: Generated<Timestamp | null>;
 }
 
 export interface DB {
+  "auth.accounts": AuthAccounts;
+  "auth.sessions": AuthSessions;
+  "auth.users": AuthUsers;
+  "auth.verifications": AuthVerifications;
+  documents: Documents;
+  groups: Groups;
+  "orgs.invitation": OrgsInvitation;
+  "orgs.list": OrgsList;
+  "orgs.member": OrgsMember;
   templates: Templates;
 }

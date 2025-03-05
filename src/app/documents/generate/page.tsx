@@ -1,4 +1,4 @@
-import { getTemplates } from "@/features/templates/action";
+import { getTemplates } from "@/features/templates/server.action";
 import React, { Fragment } from "react";
 import BackBtn from "@/components/common/backBtn";
 import TemplatesTable from "./table";

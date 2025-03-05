@@ -2,7 +2,7 @@
 import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 
-import { getHost } from "@/lib/host";
+import { getHost } from "@/lib/headers";
 
 async function getBrowser() {
   return puppeteer.launch({

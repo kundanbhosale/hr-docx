@@ -21,7 +21,10 @@ import { Minus, Plus } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { TemplateFormSchema } from "@/features/templates/schema";
 import { useTransition } from "react";
-import { createTemplate, updateTemplate } from "@/features/templates/action";
+import {
+  createTemplate,
+  updateTemplate,
+} from "@/features/templates/server.action";
 import { toast } from "sonner";
 import BackBtn from "@/components/common/backBtn";
 
