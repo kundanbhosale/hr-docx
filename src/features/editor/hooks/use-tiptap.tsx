@@ -21,6 +21,12 @@ import {
 import { fileToBase64, randomId } from "../utils";
 import { toast } from "sonner";
 import variableSuggestion from "../extensions/variables/sugesstion";
+import SearchAndReplace from "../extensions/search-replace";
+import TableRow from "@tiptap/extension-table-row";
+import TableHeader from "@tiptap/extension-table-header";
+import TableCell from "@tiptap/extension-table-cell";
+import { TableCellBackground } from "../extensions/table/cell-background";
+import Table from "@tiptap/extension-table";
 
 export interface UseTiptapEditorProps extends UseEditorOptions {
   value?: Content;
@@ -165,6 +171,16 @@ export const createExtensions = (
   HorizontalRule,
   ResetMarksOnEnter,
   CodeBlockLowlight,
+  SearchAndReplace,
+  Table.configure({
+    resizable: true,
+    lastColumnResizable: true,
+    allowTableNodeSelection: false,
+  }),
+  TableRow,
+  TableHeader,
+  TableCell,
+  TableCellBackground,
   TextAlign.configure({
     types: ["heading", "paragraph", "image"],
   }),

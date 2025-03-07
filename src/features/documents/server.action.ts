@@ -49,7 +49,7 @@ export const getSingleDocument = action(
   async (props: SingleDocumentSchema & GenerateDocumentSchema) => {
     const { id } = singleDocumentSchema.parse(props);
 
-    if (id) {
+    if (id && id !== "new") {
       await hasPermission({
         permission: {
           documents: ["read"],

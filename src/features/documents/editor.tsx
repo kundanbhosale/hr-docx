@@ -281,6 +281,7 @@ export const DocumentEditor = React.forwardRef<
 
           <LinkBubbleMenu editor={editor} />
         </MeasuredContainer>
+        {/* <DocEditor suggestionItems={props.suggestionItems} /> */}
       </div>
     );
   }

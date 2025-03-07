@@ -11,7 +11,7 @@ import TemplatesTable from "./table";
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const slug = (await params).slug;
   const data = await getTemplates({
-    group: slug === "un-categorized" ? undefined : slug,
+    group: slug,
   });
   const { data: cat } =
     slug === "un-categorized"

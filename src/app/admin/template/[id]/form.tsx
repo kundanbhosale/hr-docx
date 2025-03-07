@@ -18,7 +18,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Minus, Plus, RefreshCcw } from "lucide-react";
-import { TemplateFormSchema } from "@/features/templates/schema";
+import {
+  TemplateFormSchema,
+  templateTypeSchema,
+} from "@/features/templates/schema";
 import { useTransition } from "react";
 import {
   createTemplate,
@@ -30,7 +33,6 @@ import { SelectCategory } from "@/features/categories/client.combobox";
 import slugify from "slugify";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import MultipleSelector, { Option } from "@/components/ui/multi-select";
-import { randomUUID } from "crypto";
 
 const variables = [
   {
@@ -315,12 +317,22 @@ export function TemplateForm({ id }: { id: string }) {
                         defaultValue={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="capitalize">
                             <SelectValue placeholder="Select a type of Input" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="text">text</SelectItem>
+                          {Object.values(templateTypeSchema.Values).map(
+                            (type, i) => (
+                              <SelectItem
+                                key={i}
+                                value={type}
+                                className="capitalize"
+                              >
+                                {type}
+                              </SelectItem>
+                            )
+                          )}
                         </SelectContent>
                       </Select>
                       <FormMessage />

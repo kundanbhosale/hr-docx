@@ -14,7 +14,7 @@ import { auth } from "@/features/auth/server";
 import { getPath } from "@/lib/headers";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import React, { ReactNode } from "react";
+import React from "react";
 
 const font = Lexend_Deca({ subsets: ["latin"] });
 

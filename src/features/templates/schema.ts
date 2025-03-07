@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+export const templateTypeSchema = z.enum([
+  "text",
+  "date",
+  "time",
+  "email",
+  "phone",
+]);
 export const templateFormSchema = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
@@ -11,7 +18,7 @@ export const templateFormSchema = z.object({
       value: z.string(),
       title: z.string(),
       desc: z.string(),
-      type: z.enum(["text"]),
+      type: templateTypeSchema,
     })
   ),
 });

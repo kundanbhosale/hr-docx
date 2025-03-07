@@ -10,6 +10,7 @@ import { createPDF } from "@/features/pdf/actions";
 import { useQuery } from "@tanstack/react-query";
 import BackBtn from "@/components/common/backBtn";
 import { getSingleDocument } from "@/features/documents/server.action";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DocPage({
   documentId,
@@ -117,9 +118,15 @@ export default function DocPage({
         className="col-span-2 border-r h-screen overflow-y-auto relative flex flex-col flex-1"
         id="info-form"
       >
-        <div className="p-8 flex flex-col flex-1">
-          <div className="flex gap-2 items-center">
-            {/* <Button
+        {isLoading ? (
+          <div className="flex-1 p-8 flex flex-col gap-5">
+            <Skeleton className="h-10" />
+            <Skeleton className="flex-1" />
+          </div>
+        ) : (
+          <div className="p-8 flex flex-col flex-1">
+            <div className="flex gap-2 items-center">
+              {/* <Button
               className=""
               variant={"ghost"}
               size={"icon"}
@@ -127,26 +134,34 @@ export default function DocPage({
             >
               <ArrowLeft />
             </Button> */}
-            <BackBtn />
-            <h1 className="text-3xl">Fill Information</h1>
+              <BackBtn />
+              <h1 className="text-3xl">Fill Information</h1>
+            </div>
+            <DocumentForm downloadPDF={downloadPDF} />
           </div>
-          <DocumentForm downloadPDF={downloadPDF} />
-        </div>
+        )}
       </div>
       <div className="col-span-3 flex relative" id="editor" key={key}>
         {/* <div className="bg-muted h-full w-full border" /> */}
 
-        <DocumentEditor
-          placeholder="Write something here"
-          value={data?.content || ""}
-          suggestionItems={formState}
-          onChange={(e) => console.log(e)}
-          open={open}
-          setOpen={setOpen}
-          downloads={downloads}
-          downloadPDF={downloadPDF}
-          pending={pending}
-        />
+        {isLoading ? (
+          <div className="flex-1 p-8 flex flex-col gap-5">
+            <Skeleton className="h-10" />
+            <Skeleton className="flex-1" />
+          </div>
+        ) : (
+          <DocumentEditor
+            placeholder="Write something here"
+            value={data?.content || ""}
+            suggestionItems={formState}
+            onChange={(e) => console.log(e)}
+            open={open}
+            setOpen={setOpen}
+            downloads={downloads}
+            downloadPDF={downloadPDF}
+            pending={pending}
+          />
+        )}
       </div>
     </div>
   );

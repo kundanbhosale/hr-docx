@@ -90,7 +90,11 @@ export const getTemplates = action(async (props: GetTemplatesSchema) => {
   if (group) {
     query = query
       .leftJoin("groups", "groups.id", "templates.group") // Ensure correct table reference
-      .where("groups.slug", "=", group);
+      .where(
+        "groups.slug",
+        group === "un-categorized" ? "is" : "=",
+        group === "un-categorized" ? null : group
+      );
   }
 
   if (!search && !group) {

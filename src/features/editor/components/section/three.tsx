@@ -9,6 +9,7 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  Table,
 } from "lucide-react";
 import { ToolbarButton } from "../toolbar-button";
 import {
@@ -23,6 +24,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useTheme } from "../../hooks/use-theme";
+import CreateTablePopover from "../../extensions/table/createTablePopover";
 
 interface ColorItem {
   cssVar: string;
@@ -305,6 +307,34 @@ export const SectionThree: React.FC<SectionThreeProps> = ({
           </div>
         </PopoverContent>
       </Popover>
+      <CreateTablePopover
+        createTable={(e) =>
+          editor
+            .chain()
+            .focus()
+            .insertTable({ ...e, withHeaderRow: false })
+            .run()
+        }
+      >
+        <ToolbarButton
+          tooltip="Table"
+          // onClick={props?.action}
+          className="w-auto px-2"
+          isActive={editor.isActive("table")}
+          // disabled={props?.disabled}
+        >
+          <Table />
+          {/* Edit link */}
+        </ToolbarButton>
+        {/* <ActionButton
+        icon={props?.icon}
+        tooltip={props?.tooltip}
+        disabled={props?.disabled}
+        color={props?.color}
+        action={props?.action}
+        isActive={props?.isActive}
+      /> */}
+      </CreateTablePopover>
     </>
   );
 };
