@@ -1,5 +1,5 @@
-import { slugValidate } from "@/lib/schema";
 import { z } from "zod";
+import { templateFormSchema } from "../templates/schema";
 
 export const allDocumentsSchema = z.object({
   search: z.string().optional(),
@@ -17,12 +17,20 @@ export const generateDocumentSchema = z.object({
 });
 
 export const createDocumentSchema = z.object({
+  title: z.string(),
+  content: z.string(),
   template: z.string(),
+  schema: templateFormSchema.shape.schema,
+  thumbnail: z.string(),
 });
 
 export const updateDocumentSchema = z.object({
   id: z.string().uuid(),
-  ...createDocumentSchema.shape,
+  title: z.string().optional(),
+  content: z.string().optional(),
+  schema: templateFormSchema.shape.schema,
+  starred: z.boolean().optional(),
+  thumbnail: z.string(),
 });
 
 export const deleteDocumentSchema = z.object({

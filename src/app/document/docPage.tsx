@@ -1,25 +1,33 @@
 "use client";
 import { DocumentForm } from "./form";
-import React, { useEffect, useState } from "react";
+import React, { FocusEvent, useEffect, useState } from "react";
 import { useDocumentStore } from "@/features/documents/store";
 import DocumentEditor from "@/features/documents/editor";
-
-import { useRouter } from "next/navigation";
 
 import { createPDF } from "@/features/pdf/actions";
 import { useQuery } from "@tanstack/react-query";
 import BackBtn from "@/components/common/backBtn";
-import { getSingleDocument } from "@/features/documents/server.action";
+import {
+  createDocument,
+  getSingleDocument,
+  updateDocument,
+} from "@/features/documents/server.action";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Download, Save } from "lucide-react";
+import { Counter } from "@/components/common/counter";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { captureScreenshot } from "@/lib/screenshot";
 
 export default function DocPage({
   documentId,
   templateId,
 }: {
-  documentId: string;
-  templateId: string;
+  documentId?: string;
+  templateId?: string;
 }) {
-  const { formState, reset, editor, update } = useDocumentStore();
+  const { formState, reset, editor, update, progress, inputFocused, title } =
+    useDocumentStore();
   const {
     data: result,
     isLoading,
@@ -31,15 +39,43 @@ export default function DocPage({
   });
   const data = result?.data;
 
-  console.log(data);
-
   const [open, setOpen] = React.useState(false);
   const [downloads, setDownloads] = React.useState(0);
   const [pending, startTransition] = React.useTransition();
   const [key, setKey] = useState(0);
 
+  const saveDocument = () => {
+    startTransition(async () => {
+      const el = document.getElementsByClassName("-tiptap-editor")[0];
+      const thumbnail = await captureScreenshot(el as any);
+      toast.promise(
+        documentId && documentId !== "new"
+          ? updateDocument({
+              id: documentId,
+              schema: formState,
+              content: editor?.getHTML() || "",
+              title,
+              thumbnail,
+            })
+          : createDocument({
+              schema: formState,
+              content: editor?.getHTML() || "",
+              title,
+              template: data?.template!,
+              thumbnail,
+            }),
+        {
+          loading: "Saving Document",
+          success: "Succesfully saved document",
+          error: "Failed to save document",
+        }
+      );
+    });
+  };
+
   const downloadPDF = () => {
     startTransition(() => {
+      saveDocument();
       const val = editor?.getHTML();
       createPDF(val).then((d) => {
         const byteCharacters = atob(d);
@@ -62,17 +98,37 @@ export default function DocPage({
   };
 
   useEffect(() => {
-    reset(data?.schema || []);
+    if (!data) return;
+    reset(data);
     if (data?.schema.length === 0) {
       update({ progress: 100 });
     }
     setKey(new Date().getTime());
 
-    return () => reset(data?.schema || []);
+    return () => reset(data);
   }, [data]);
 
   const focusedClass = ["node-focused"];
-  const router = useRouter();
+
+  React.useEffect(() => {
+    const focused = (e: FocusEvent) => {
+      const target = (e as any)?.srcElement as HTMLElement | null;
+
+      if (target?.tagName === "INPUT") {
+        update({ inputFocused: true });
+      }
+    };
+
+    const notFocused = () => update({ inputFocused: false });
+
+    document.addEventListener("focusin", focused as any);
+    document.addEventListener("focusout", notFocused);
+
+    return () => {
+      document.removeEventListener("focusin", focused as any);
+      document.removeEventListener("focusout", notFocused);
+    };
+  }, []);
 
   useEffect(() => {
     const style = document.createElement("style");
@@ -134,14 +190,14 @@ export default function DocPage({
             >
               <ArrowLeft />
             </Button> */}
-              <BackBtn />
+              <BackBtn href="/documents" />
               <h1 className="text-3xl">Fill Information</h1>
             </div>
-            <DocumentForm downloadPDF={downloadPDF} />
+            <DocumentForm />
           </div>
         )}
       </div>
-      <div className="col-span-3 flex relative" id="editor" key={key}>
+      <div className="col-span-3 flex relative" id="editor">
         {/* <div className="bg-muted h-full w-full border" /> */}
 
         {isLoading ? (
@@ -150,17 +206,70 @@ export default function DocPage({
             <Skeleton className="flex-1" />
           </div>
         ) : (
-          <DocumentEditor
-            placeholder="Write something here"
-            value={data?.content || ""}
-            suggestionItems={formState}
-            onChange={(e) => console.log(e)}
-            open={open}
-            setOpen={setOpen}
-            downloads={downloads}
-            downloadPDF={downloadPDF}
-            pending={pending}
-          />
+          <>
+            <div
+              className={cn(
+                "bg-primary gap-1 fixed  z-40 bottom-20 right-20 flex items-center justify-center overflow-hidden p-2  rounded-lg drop-shadow-lg pointer-events-none",
+                pending && "hidden"
+              )}
+            >
+              <>
+                <div
+                  className={cn(
+                    "size-16 flex text-primary-foreground flex-col items-center justify-center",
+                    !inputFocused && "hidden"
+                  )}
+                >
+                  {/* <motion.pre className="block font-semibold text-2xl">{`${rounded.get()}%`}</motion.pre> */}
+                  <span className="block font-semibold text-2xl">
+                    <Counter value={progress} />%
+                  </span>
+
+                  <p className="block font-semibold">Progress</p>
+                </div>
+              </>
+              {!inputFocused && (
+                <div className="flex">
+                  <a
+                    onClick={downloadPDF}
+                    className={cn(
+                      "rounded-md flex justify-center cursor-pointer text-background p-2 w-20 h-16 [&_svg]:size-7 hover:bg-white hover:text-primary shadow-none pointer-events-auto z-40 relative"
+                    )}
+                  >
+                    <div className="flex flex-col items-center justify-center">
+                      <Download />
+                      <span className="!hover:text-primary-foreground text-[12px]">
+                        Download
+                      </span>
+                    </div>
+                  </a>
+                  <a
+                    className="rounded-md flex justify-center cursor-pointer text-background p-2 w-20 h-16 [&_svg]:size-7 hover:bg-white hover:text-primary shadow-none pointer-events-auto z-40 relative"
+                    onClick={saveDocument}
+                  >
+                    <div className="flex flex-col items-center justify-center">
+                      <Save />
+                      <span className="!hover:text-primary-foreground text-[12px]">
+                        Save
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              )}
+            </div>
+            <DocumentEditor
+              key={key}
+              placeholder="Write something here"
+              value={data?.content || ""}
+              suggestionItems={formState}
+              onChange={(e) => console.log(e)}
+              open={open}
+              setOpen={setOpen}
+              downloads={downloads}
+              downloadPDF={downloadPDF}
+              pending={false}
+            />
+          </>
         )}
       </div>
     </div>

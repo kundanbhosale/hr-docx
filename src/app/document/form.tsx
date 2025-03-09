@@ -9,13 +9,15 @@ import { useDebouncedCallback } from "use-debounce";
 import { FileText } from "lucide-react";
 import confetti from "canvas-confetti";
 import Loading from "@/components/common/loading";
+import { TemplateFormSchema } from "@/features/templates/schema";
 
-export function DocumentForm({ downloadPDF }: { downloadPDF: any }) {
+export function DocumentForm() {
   const { formState, setFormValue, progress } = useDocumentStore();
   const [loading, setLoading] = useState(true);
   const onSubmit = (vals) => {
     console.log(vals);
   };
+
   useEffect(() => {
     const onHashChanged = () => {
       const name = window.location.hash.split(":")[1];
@@ -33,7 +35,8 @@ export function DocumentForm({ downloadPDF }: { downloadPDF: any }) {
     confetti({
       particleCount: 100,
       spread: 70,
-      origin: { y: 1, x: 0.7 },
+      angle: 125,
+      origin: { y: 0.95, x: 0.95 },
     });
   }
 
@@ -61,6 +64,7 @@ export function DocumentForm({ downloadPDF }: { downloadPDF: any }) {
       </div>
     );
   }
+
   return (
     <div>
       <div
@@ -98,6 +102,7 @@ export function DocumentForm({ downloadPDF }: { downloadPDF: any }) {
             Generate PDF Document.
           </Button> */}
       </div>
+
       <form className="py-8 space-y-6" onSubmit={onSubmit}>
         {formState.map((f, i) => (
           <Fragment key={i}>
@@ -105,12 +110,9 @@ export function DocumentForm({ downloadPDF }: { downloadPDF: any }) {
               <div>
                 <Label className="mb-0 font-medium">{f.title}</Label>
               </div>
-              <Input
-                name={f.id}
-                placeholder={f.desc}
-                className={cn("bg-transparent")}
-                autoComplete="off"
-                onChange={(e) => debounced(f.id, e.currentTarget.value)}
+              <FormInput
+                schema={f}
+                onChange={(value) => debounced(f.id, value)}
                 onFocus={() => {
                   window.location.hash = f.id;
                 }}
@@ -134,4 +136,46 @@ export function DocumentForm({ downloadPDF }: { downloadPDF: any }) {
       </form>
     </div>
   );
+}
+
+function FormInput({
+  onChange,
+  onBlur,
+  onFocus,
+  schema,
+}: {
+  onChange: (v: string) => void;
+  onBlur: () => void;
+  onFocus: () => void;
+  schema: TemplateFormSchema["schema"][0];
+}) {
+  const getType = () => {
+    switch (schema.type) {
+      case "email":
+        return "email";
+      case "time":
+        return "time";
+      case "date":
+        return "date";
+      default:
+        return "text";
+    }
+  };
+
+  switch (schema.type) {
+    default:
+      return (
+        <Input
+          name={schema.id}
+          type={getType()}
+          placeholder={schema.desc}
+          defaultValue={schema.value}
+          className={cn("bg-transparent")}
+          autoComplete="off"
+          onChange={(e) => onChange(e.currentTarget.value)}
+          onBlur={onBlur}
+          onFocus={onFocus}
+        />
+      );
+  }
 }

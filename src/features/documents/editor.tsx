@@ -15,7 +15,7 @@ import { Toolbar } from "@/features/editor/toolbar";
 import { useDocumentStore } from "../documents/store";
 import { useThrottle } from "@/features/editor/hooks/use-throttle";
 import { getOutput } from "@/features/editor/utils";
-import { Check, Download, Share2 } from "lucide-react";
+import { Check } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -23,8 +23,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import Loading from "@/components/common/loading";
+import { Button } from "@/components/ui/button";
 
 export interface TiptapProps extends Omit<UseTiptapEditorProps, "onUpdate"> {
   value?: string;
@@ -121,12 +121,19 @@ export const DocumentEditor = React.forwardRef<
       open,
       setOpen,
       downloadPDF,
+
       ...props
     },
     ref
   ) => {
-    const { formState, clearFormUpdates, formUpdates, update, progress } =
-      useDocumentStore();
+    const {
+      inputFocused,
+      formState,
+      clearFormUpdates,
+      formUpdates,
+      update,
+      progress,
+    } = useDocumentStore();
 
     const editor = useTiptapEditor({
       value: value,
@@ -173,7 +180,7 @@ export const DocumentEditor = React.forwardRef<
           <DialogContent className="flex items-center justify-center flex-col">
             {pending ? (
               <div className="w-full h-[300px] bg-white flex items-center justify-center">
-                <Loading title="Downloading..." />
+                <Loading title="Submitting..." />
               </div>
             ) : (
               <>
@@ -211,60 +218,13 @@ export const DocumentEditor = React.forwardRef<
           </DialogContent>
         </Dialog>
 
-        {progress !== 0 && (
-          <div
-            className={cn(
-              progress >= 100 && "scale-125",
-              "transition-all ease-linear text-muted-white max-w-lg w-1/2 m-auto rounded-full border-2 z-20 h-9 bg-neutral-100 border-emerald-600 overflow-hidden drop-shadow-xl absolute bottom-[10%] inset-x-0 flex items-center justify-end text-end p-4"
-            )}
-          >
-            <div
-              className="h-8 block bg-emerald-600 min-w-9 rounded-full absolute left-0 transition-all ease-linear"
-              style={{ width: `${progress}%` }}
-            />
-            {progress < 100 ? (
-              <>
-                <span className="font-semibold absolute left-5 inset-y-auto">
-                  Progress
-                </span>
-                <span className="font-semibold absolute right-5 inset-y-auto">
-                  {`${100 - progress}% left`}
-                </span>
-              </>
-            ) : (
-              <div className="font-semibold absolute left-0 inset-y-auto flex h-9 justify-between w-full pl-6 pr-1 text-start items-center gap-px">
-                <div className="flex-1">
-                  <p className="fit-content text-white">
-                    {" "}
-                    Your document is ready!
-                  </p>
-                </div>
-                <a
-                  onClick={() => downloadPDF()}
-                  className="px-4 py-1.5 h-7 flex justify-center items-center bg-white rounded-l-full w-fit cursor-pointer hover:bg-black hover:text-white transition-all ease-linear"
-                >
-                  <span>
-                    <Download className="size-4" />
-                  </span>
-                  &nbsp; Download
-                </a>
-                <a className="px-4 py-1.5 flex h-7 justify-center items-center bg-white rounded-r-full w-fit cursor-pointer hover:bg-black hover:text-white transition-all ease-linear">
-                  <span>
-                    <Share2 className="size-4" />
-                  </span>
-                </a>
-              </div>
-            )}
-          </div>
-        )}
-
         <MeasuredContainer
           as="div"
           name="editor"
           id="editor-container"
           ref={ref}
           className={cn(
-            "flex h-auto min-h-72 w-full flex-col focus-within:border-primary max-h-screen overflow-y-auto bg-muted ",
+            "flex h-auto min-h-72 w-full flex-col focus-within:border-primary max-h-screen overflow-y-auto bg-accent ",
             className
           )}
         >

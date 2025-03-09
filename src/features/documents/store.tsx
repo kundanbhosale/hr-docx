@@ -2,35 +2,39 @@ import { create } from "zustand";
 import { produce } from "immer";
 import { Editor } from "@tiptap/core";
 import { TemplateFormSchema } from "../templates/schema";
+import { Selectable } from "kysely";
+import { Documents } from "@/_server/db/types";
 
 interface FormState {
+  title: string;
   editor: Editor | null;
   formState: TemplateFormSchema["schema"];
   progress: number;
   formUpdates: Array<string>;
+  inputFocused?: boolean;
   update: (
     val: Partial<Omit<FormState, "setFormValue" | "clearFormUpdates">>
   ) => void;
-  reset: (formState: TemplateFormSchema["schema"]) => void;
+  reset: (formState: Selectable<Documents>) => void;
   setFormValue: (id: string, value: string) => void;
   clearFormUpdates: (id: string) => void;
 }
 const initialData = {
+  title: "",
   editor: null,
   formUpdates: [],
   formState: [],
   progress: 0,
+  inputFocused: false,
 };
 export const useDocumentStore = create<FormState>((set) => ({
   ...initialData,
   update: (data) => set(data),
-  reset: (formState) =>
+  reset: (data) =>
     set({
       ...initialData,
-      formState: formState.map((d) => ({
-        ...d,
-        value: "",
-      })),
+      title: data.title || "",
+      formState: data.schema,
     }),
   clearFormUpdates: (id) =>
     set((state) => ({

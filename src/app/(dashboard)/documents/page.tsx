@@ -1,36 +1,42 @@
-import { getAllPublicCategories } from "@/features/categories/server.action";
+import { CreateBtn } from "@/features/documents/components/createbtn";
+import { getAllDocuments } from "@/features/documents/server.action";
 import Image from "next/image";
 
 import Link from "next/link";
 import React from "react";
 
 const Page = async () => {
-  const cats = await getAllPublicCategories({});
-
+  const data = await getAllDocuments({});
+  console.log(data);
   return (
     <div>
       <div className="flex flex-wrap gap-8">
-        {cats.data?.map((t, i) => (
+        <CreateBtn />
+        {data.data?.map(({ document: t }, i) => (
           <Link
-            href={"document/" + t.slug}
+            href={"document/" + t.id}
             key={i}
             style={{
               width: "12rem",
-              height: "16rem",
             }}
           >
-            <div className="border rounded-md overflow-hidden mb-1">
-              <Image
+            <div
+              className="border rounded-md overflow-hidden mb-1"
+              style={{
+                height: "16rem",
+                overflow: "hidden",
+              }}
+            >
+              <img
                 key={i}
-                src={"/docs.png"}
+                src={t.thumbnail || "/docs.png"}
                 alt=""
                 width={300}
                 height={300}
-                quality={100}
               />
             </div>
-            <p className="font-medium text-muted-foreground">
-              Title of the document
+            <p className="font-medium text-muted-foreground truncate">
+              {t.title || "Untitled Document"}
             </p>
           </Link>
           // <Link

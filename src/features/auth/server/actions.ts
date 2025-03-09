@@ -13,14 +13,19 @@ export const getSession = cache(async () => {
 export const hasPermission = cache(
   async (
     body: Parameters<typeof auth.api.hasPermission>[0]["body"] | undefined,
-    type: "internal" | "external" = "external"
+    type: "internal" | "external-public" | "external-org" = "external-org"
   ) => {
     const session = await getSession();
     if (!session?.user.id) {
       const url = headers().get("x-current-path") || "";
       return redirect("/login?cb=" + url);
     }
-    if (type === "external" && !body) throw Error("Unauthenticated!");
+    if (
+      (["external-public", "external-org"].includes(type) && !body) ||
+      (type === "external-org" && !session.session.activeOrganizationId)
+    )
+      throw Error("Unauthenticated!");
+
     if (session.session.activeOrganizationId && body) {
       body.organizationId = session.session.activeOrganizationId;
     }

@@ -86,10 +86,14 @@ export interface Documents {
   downloads: Generated<number>;
   id: string;
   org: string;
-  schema: Generated<ArrayType<Json>>;
+  /**
+   * @type:Array<{id: string,desc: string,type: string | any,title: string,value: string}>
+   */
+  schema: Array<{id: string,desc: string,type: string | any,title: string,value: string}>
   starred: Generated<boolean>;
   template: string | null;
   template_version: Generated<number>;
+  thumbnail: string | null;
   title: string | null;
   updated_at: Timestamp | null;
 }
@@ -97,7 +101,7 @@ export interface Documents {
 export interface Groups {
   color: string | null;
   created_at: Generated<Timestamp | null>;
-  created_by: string;
+  created_by: string | null;
   deleted_at: Timestamp | null;
   id: string;
   is_public: Generated<boolean | null>;
@@ -137,12 +141,15 @@ export interface OrgsMember {
 export interface Templates {
   content: string;
   created_at: Generated<Timestamp | null>;
-  created_by: string;
+  created_by: string | null;
   deleted_at: Timestamp | null;
   group: string | null;
   id: string;
   is_public: Generated<boolean | null>;
-  schema: Generated<ArrayType<Json>>;
+  /**
+   * @type:Array<{id: string,desc: string,type: string | any,title: string,value: string}>
+   */
+  schema: Array<{id: string,desc: string,type: string | any,title: string,value: string}>
   slug: string;
   template_version: Generated<number>;
   thumbnail: string | null;

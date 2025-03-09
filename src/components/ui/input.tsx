@@ -24,7 +24,7 @@ type InputProps = React.PropsWithChildren<React.ComponentProps<"input">> & {
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ children, icon, className, type, ...props }, ref) => {
     const classes = cn(
-      "flex h-10 item-center w-full gap-x-2 rounded-md border border-input bg-background px-3 py-2 text-sm has-[:focus-visible]:outline-none has-[:focus-visible]:border-primary has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 focus-within:bg-yellow-300",
+      "flex h-10 item-center w-full gap-x-2 rounded-md border border-input bg-background px-3 py-2 text-sm has-[:focus-visible]:outline-none has-[:focus-visible]:border-primary has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50",
       className
     );
     return (
@@ -32,7 +32,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <span className="flex items-center justify-center">{icon}</span>
         <input
           type={type}
-          className="flex-1 h-full outline-none file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed focus:bg-yellow-300"
+          className="flex-1 h-full outline-none file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed"
           ref={ref}
           {...props}
         />

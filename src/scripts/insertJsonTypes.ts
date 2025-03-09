@@ -1,5 +1,5 @@
+import { DB } from "../_server/db/types";
 import { env } from "../app/env";
-import { DB } from "../_server/db";
 import { readFileSync, writeFileSync } from "fs";
 import { Kysely, PostgresDialect } from "kysely";
 import { Pool } from "pg";
@@ -63,23 +63,28 @@ const transformFile = async () => {
       ": Json;",
       ": ArrayType<Json> | null;",
       ": ArrayType<Json>",
+      ": Generated<ArrayType<Json>>;",
     ];
 
     const matchIdx = matches.findIndex((m) => line.includes(m));
     if (matchIdx !== -1) {
       const match = matches[matchIdx];
-      console.log(match);
       const columnName = line.split(match)[0].trim();
       if (tableName && columnName) {
         const table = tables.find((table) => {
           const name =
-            (table.schema && `${table.schema}.${table.name}`) || table.name;
+            (table.schema &&
+              table.schema !== "public" &&
+              `${table.schema}.${table.name}`) ||
+            table.name;
+
           return name === tableName;
         });
         const column = table?.columns.find(
           (column) => column.name == columnName
         );
         const type = column?.comment?.split("@type:")[1];
+        console.log({ matchedColumn: column });
 
         if (type) return line.replace(match.split(": ")[1], type);
       }

@@ -3,25 +3,29 @@
 import { db } from "@/_server/db";
 import { action } from "@/lib/error";
 import {
+  allDocumentsSchema,
+  AllDocumentsSchema,
+  createDocumentSchema,
+  CreateDocumentSchema,
   generateDocumentSchema,
   GenerateDocumentSchema,
   singleDocumentSchema,
-  SingleDocumentSchema,
+  updateDocumentSchema,
+  UpdateDocumentSchema,
 } from "./schema";
-import { Documents } from "@/_server/db/types";
+import { Documents, Templates } from "@/_server/db/types";
 import { hasPermission } from "../auth/server/actions";
-import { Selectable } from "kysely";
+import { Expression, Selectable, sql, SqlBool } from "kysely";
+import { randomUUID } from "crypto";
+import { redirect, RedirectType } from "next/navigation";
 
 export const generateDocument = async (props: GenerateDocumentSchema) => {
   const { template } = generateDocumentSchema.parse(props);
-  const { session, user } = await hasPermission(
-    {
-      permission: {
-        documents: ["create"],
-      },
+  const { session, user } = await hasPermission({
+    permission: {
+      documents: ["create"],
     },
-    "external"
-  );
+  });
   const templateData = await db
     .selectFrom("templates")
     .selectAll()
@@ -42,11 +46,12 @@ export const generateDocument = async (props: GenerateDocumentSchema) => {
     template_version: templateData.template_version,
     created_at: new Date().toISOString() as any,
     updated_at: new Date().toISOString() as any,
+    thumbnail: null,
   } satisfies Selectable<Documents>;
 };
 
 export const getSingleDocument = action(
-  async (props: SingleDocumentSchema & GenerateDocumentSchema) => {
+  async (props: { id?: string; template?: string }) => {
     const { id } = singleDocumentSchema.parse(props);
 
     if (id && id !== "new") {
@@ -60,9 +65,98 @@ export const getSingleDocument = action(
         .where("id", "=", id)
         .selectAll()
         .executeTakeFirstOrThrow();
+      console.log(id);
       return document as Selectable<Documents>;
     } else {
-      return await generateDocument(props);
+      if (!props.template) throw Error("No template provided");
+      return await generateDocument({ template: props.template });
     }
   }
 );
+
+export const getAllDocuments = action(async (params: AllDocumentsSchema) => {
+  const { search } = allDocumentsSchema.parse(params);
+  const { session } = await hasPermission({
+    permission: {
+      documents: ["read"],
+    },
+  });
+
+  const data = await db
+    .selectFrom("documents")
+    .select((eb) => [
+      sql<Documents>`to_jsonb(documents)`.as("document"),
+      sql<Templates>`to_jsonb(templates)`.as("template"),
+    ])
+    .where("org", "=", session.activeOrganizationId!)
+    .innerJoin("templates", "templates.id", "documents.template")
+
+    .where((eb) => {
+      const filters: Expression<SqlBool>[] = [];
+
+      if (search) {
+        const searchConditions = [eb("title", "ilike", `%${search!}%`)];
+
+        filters.push(eb.or(searchConditions));
+      }
+      return eb.and(filters);
+    })
+
+    .execute();
+  return data;
+});
+
+export const createDocument = async (props: CreateDocumentSchema) => {
+  const { template, schema, content, title, thumbnail } =
+    createDocumentSchema.parse(props);
+
+  const { session, user } = await hasPermission({
+    permission: {
+      documents: ["create"],
+    },
+  });
+
+  const templateData = await db
+    .selectFrom("templates")
+    .selectAll()
+    .where("id", "=", template)
+    .executeTakeFirstOrThrow();
+
+  const data = await db
+    .insertInto("documents")
+    .values({
+      id: randomUUID(),
+      title,
+      schema,
+      content,
+      thumbnail,
+      starred: false,
+      org: session.activeOrganizationId!,
+      created_by: user.id,
+      updated_at: sql`now()`,
+      downloads: 0,
+      template: templateData.id,
+      template_version: templateData.template_version,
+    })
+    .returning("id")
+    .executeTakeFirstOrThrow();
+
+  return redirect(data.id, RedirectType.replace);
+};
+
+export const updateDocument = async (props: UpdateDocumentSchema) => {
+  const { id, ...rest } = updateDocumentSchema.parse(props);
+
+  await hasPermission({
+    permission: {
+      documents: ["update"],
+    },
+  });
+
+  await db
+    .updateTable("documents")
+    .where("id", "=", id)
+    .set({ ...rest, updated_at: sql`now()` })
+    .execute();
+  return true;
+};
