@@ -12,6 +12,7 @@ interface FormState {
   progress: number;
   formUpdates: Array<string>;
   inputFocused?: boolean;
+  nodeFocused: string;
   update: (
     val: Partial<Omit<FormState, "setFormValue" | "clearFormUpdates">>
   ) => void;
@@ -21,6 +22,7 @@ interface FormState {
 }
 const initialData = {
   title: "",
+  nodeFocused: "",
   editor: null,
   formUpdates: [],
   formState: [],

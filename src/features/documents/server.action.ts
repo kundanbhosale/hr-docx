@@ -21,11 +21,7 @@ import { redirect, RedirectType } from "next/navigation";
 
 export const generateDocument = async (props: GenerateDocumentSchema) => {
   const { template } = generateDocumentSchema.parse(props);
-  const { session, user } = await hasPermission({
-    permission: {
-      documents: ["create"],
-    },
-  });
+
   const templateData = await db
     .selectFrom("templates")
     .selectAll()
@@ -35,9 +31,9 @@ export const generateDocument = async (props: GenerateDocumentSchema) => {
   return {
     id: "new",
     content: templateData.content,
-    created_by: user.id,
+    created_by: "",
     downloads: 0,
-    org: session.activeOrganizationId!,
+    org: "",
     template: templateData.id,
     title: templateData.title,
     schema: templateData.schema,

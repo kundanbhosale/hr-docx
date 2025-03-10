@@ -6,7 +6,7 @@ export function middleware(req) {
   const { nextUrl, headers } = req;
 
   const requestHeaders = new Headers(headers);
-  requestHeaders.set("x-current-path", nextUrl.pathname);
+  requestHeaders.set("x-current-path", nextUrl.pathname + nextUrl.search);
 
   const response = NextResponse.next({
     request: { headers: requestHeaders },

@@ -4,7 +4,8 @@ export const signIn = async (
   type: "google" | "microsoft" | "magic-link",
   opts?: { email?: string; callbackURL?: string }
 ) => {
-  if (opts?.callbackURL) {
+  console.log(opts);
+  if (!opts?.callbackURL) {
     opts.callbackURL = "/org";
   }
   switch (type) {
@@ -28,6 +29,7 @@ export const signIn = async (
       return await authClient.signIn
         .social({
           provider: "google",
+          callbackURL: opts!.callbackURL,
         })
         .then((_r) => true)
         .catch((e) => {
@@ -38,6 +40,7 @@ export const signIn = async (
       return await authClient.signIn
         .social({
           provider: "microsoft",
+          callbackURL: opts!.callbackURL,
         })
         .then((_r) => true)
         .catch((e) => {

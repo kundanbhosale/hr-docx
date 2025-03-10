@@ -8,6 +8,9 @@ export const getDashboardData = async () => {
   const head = await headers();
   const sess = await auth.api.getSession({ headers: head });
 
+  if (!sess?.session.activeOrganizationId)
+    throw Error("No active organization");
+
   const [documents, counts] = await Promise.all([
     await db
       .selectFrom("documents")

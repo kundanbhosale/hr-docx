@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useDocumentStore } from "@/features/documents/store";
 import { mergeAttributes, Node } from "@tiptap/core";
 import { DOMOutputSpec, Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { PluginKey } from "@tiptap/pm/state";
@@ -187,7 +188,9 @@ export const Variable = Node.create<VariableOptions>({
           return {
             tabindex: 0,
             "data-id": attributes.id,
-            onclick: `window.location.hash='node:${attributes.id}'`,
+            onclick: useDocumentStore
+              .getState()
+              .update({ nodeFocused: attributes.id }),
             // onmouseover: `window.location.hash='node:${attributes.id}'`,
           };
         },

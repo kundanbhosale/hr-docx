@@ -10,10 +10,6 @@ import { tourSteps } from "@/features/tour/steps";
 import TourCard from "@/features/tour/card";
 import QueryProvider from "@/contexts/queryProvider";
 
-import { auth } from "@/features/auth/server";
-import { getPath } from "@/lib/headers";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import React from "react";
 
 const font = Lexend_Deca({ subsets: ["latin"] });
@@ -25,21 +21,11 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
-  const head = headers();
-  const data = await auth.api.getSession({
-    headers: head,
-  });
-  const path = await getPath();
-  if (!data?.session && path !== "/login") return redirect("/login");
-
-  if (data?.session) {
-    if (!data?.session.activeOrganizationId && path !== "/org")
-      return redirect("/org");
-  }
-
   return (
     <html lang="en">
       <body className={`${font.className} antialiased`}>
@@ -62,7 +48,10 @@ export default async function RootLayout({
                   easing="linear"
                   showSpinner={false}
                 />
-                <TooltipProvider>{children}</TooltipProvider>
+                <TooltipProvider>
+                  {modal}
+                  {children}
+                </TooltipProvider>
               </NuqsAdapter>
             </Onborda>
           </OnbordaProvider>

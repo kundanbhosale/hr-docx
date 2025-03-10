@@ -19,7 +19,6 @@ import { revalidatePath } from "next/cache";
 
 export const getPublicTemplates = action(async (props: { search: string }) => {
   const { search } = z.object({ search: z.string() }).parse(props);
-
   let query = db
     .selectFrom("templates")
     .where("templates.deleted_at", "is", null)
@@ -51,7 +50,9 @@ export const getPublicTemplates = action(async (props: { search: string }) => {
     );
   }
 
-  return await query.execute();
+  const result = await query.execute();
+  console.log({ result });
+  return result;
 });
 
 export const getTemplates = action(async (props: GetTemplatesSchema) => {

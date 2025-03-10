@@ -1,8 +1,10 @@
+"use server";
 import { headers } from "next/headers";
 import { auth } from "./init";
 import { cache } from "react";
 import { env } from "@/app/env";
 import { redirect } from "next/navigation";
+import { action } from "@/lib/error";
 
 export const getSession = cache(async () => {
   return await auth.api.getSession({
@@ -16,15 +18,17 @@ export const hasPermission = cache(
     type: "internal" | "external-public" | "external-org" = "external-org"
   ) => {
     const session = await getSession();
+    const url = headers().get("x-current-path") || "";
+
     if (!session?.user.id) {
-      const url = headers().get("x-current-path") || "";
-      return redirect("/login?cb=" + url);
+      redirect("/login?cb=" + url);
     }
     if (
       (["external-public", "external-org"].includes(type) && !body) ||
       (type === "external-org" && !session.session.activeOrganizationId)
-    )
-      throw Error("Unauthenticated!");
+    ) {
+      redirect("/org?cb=" + url);
+    }
 
     if (session.session.activeOrganizationId && body) {
       body.organizationId = session.session.activeOrganizationId;

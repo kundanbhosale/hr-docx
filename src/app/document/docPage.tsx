@@ -18,6 +18,8 @@ import { Counter } from "@/components/common/counter";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { captureScreenshot } from "@/lib/screenshot";
+import { authClient } from "@/features/auth/client";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function DocPage({
   documentId,
@@ -26,8 +28,16 @@ export default function DocPage({
   documentId?: string;
   templateId?: string;
 }) {
-  const { formState, reset, editor, update, progress, inputFocused, title } =
-    useDocumentStore();
+  const {
+    formState,
+    reset,
+    editor,
+    update,
+    progress,
+    inputFocused,
+    title,
+    nodeFocused,
+  } = useDocumentStore();
   const {
     data: result,
     isLoading,
@@ -37,47 +47,43 @@ export default function DocPage({
     queryFn: async () =>
       await getSingleDocument({ id: documentId, template: templateId }),
   });
-  const data = result?.data;
 
+  const router = useRouter();
+  const data = result?.data;
+  const sess = authClient.useSession();
   const [open, setOpen] = React.useState(false);
   const [downloads, setDownloads] = React.useState(0);
   const [pending, startTransition] = React.useTransition();
   const [key, setKey] = useState(0);
 
-  const saveDocument = () => {
-    startTransition(async () => {
-      const el = document.getElementsByClassName("-tiptap-editor")[0];
-      const thumbnail = await captureScreenshot(el as any);
-      toast.promise(
-        documentId && documentId !== "new"
-          ? updateDocument({
-              id: documentId,
-              schema: formState,
-              content: editor?.getHTML() || "",
-              title,
-              thumbnail,
-            })
-          : createDocument({
-              schema: formState,
-              content: editor?.getHTML() || "",
-              title,
-              template: data?.template!,
-              thumbnail,
-            }),
-        {
-          loading: "Saving Document",
-          success: "Succesfully saved document",
-          error: "Failed to save document",
-        }
+  const saveFn = async (shouldDownload?: boolean) => {
+    if (!sess.data?.session)
+      return router.push(
+        "/login?cb=" + window.location.pathname + window.location.search
       );
-    });
-  };
+    const el = document.getElementsByClassName("-tiptap-editor")[0];
+    const thumbnail = await captureScreenshot(el as any);
 
-  const downloadPDF = () => {
-    startTransition(() => {
-      saveDocument();
-      const val = editor?.getHTML();
-      createPDF(val).then((d) => {
+    const exec = async () => {
+      if (documentId && documentId !== "new") {
+        await updateDocument({
+          id: documentId,
+          schema: formState,
+          content: editor?.getHTML() || "",
+          title,
+          thumbnail,
+        });
+      } else {
+        await createDocument({
+          schema: formState,
+          content: editor?.getHTML() || "",
+          title,
+          template: data?.template!,
+          thumbnail,
+        });
+      }
+      if (!shouldDownload) return;
+      await createPDF(val).then((d) => {
         const byteCharacters = atob(d);
         const byteNumbers = new Array(byteCharacters.length)
           .fill(null)
@@ -94,6 +100,24 @@ export default function DocPage({
         document.body.removeChild(link);
         setDownloads((p) => p + 1);
       });
+    };
+
+    toast.promise(exec, {
+      loading: "Saving Document",
+      success: "Succesfully saved document",
+      error: "Failed to save document",
+    });
+  };
+
+  const saveDocument = () => {
+    startTransition(async () => {
+      saveFn();
+    });
+  };
+
+  const downloadPDF = async () => {
+    startTransition(() => {
+      saveFn(true);
     });
   };
 
@@ -143,7 +167,7 @@ export default function DocPage({
     document.body.appendChild(style);
 
     const onHashChanged = () => {
-      const hash = window.location.hash.substring(1);
+      const hash = nodeFocused;
       const container = document.getElementById("editor-container");
       const el = document.querySelector(`[data-id="${hash}"]`) as HTMLElement;
       if (!el || !container) return;
@@ -166,7 +190,7 @@ export default function DocPage({
     return () => {
       window.removeEventListener("hashchange", onHashChanged);
     };
-  }, []);
+  }, [nodeFocused]);
 
   return (
     <div className="grid grid-cols-5">

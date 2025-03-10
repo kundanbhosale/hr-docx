@@ -25,7 +25,11 @@ const Page = () => {
       </>
     );
 
-  return <DocPage documentId="new" templateId={template} />;
+  return (
+    <>
+      <DocPage documentId="new" templateId={template} />
+    </>
+  );
 };
 
 export default Page;
