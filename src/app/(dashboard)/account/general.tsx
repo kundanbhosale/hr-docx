@@ -3,10 +3,8 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/features/auth/client";
-import Image from "next/image";
 import React, { useTransition } from "react";
 import Loading from "./loading";
-import { format } from "date-fns";
 import {
   Card,
   CardContent,
@@ -20,6 +18,7 @@ import { redirect, RedirectType } from "next/navigation";
 
 export default function General() {
   const { data, isPending } = authClient.useSession();
+  const org = authClient.useActiveOrganization();
 
   const [pending, startTrans] = useTransition();
 
@@ -64,11 +63,11 @@ export default function General() {
 
         <div>
           <Label>Name</Label>
-          <Input name="name" defaultValue={""} />
+          <Input name="name" defaultValue={org.data?.name} />
         </div>
         <div>
           <Label>Slug</Label>
-          <Input name="slug" defaultValue={""} />
+          <Input name="slug" defaultValue={org.data?.slug} />
         </div>
         <Button variant={"outline"}>Save Changes</Button>
       </div>

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,8 +7,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
-import React from "react";
+import { Plus, X } from "lucide-react";
+import React, { useTransition } from "react";
 import {
   Table,
   TableBody,
@@ -18,8 +18,55 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { authClient } from "@/features/auth/client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function Team() {
+  const { data, isLoading } = authClient.useActiveOrganization();
+  const [pending, startTrans] = useTransition();
+
+  const removeMember = async (memberIdOrEmail: string) => {
+    startTrans(() => {
+      toast.promise(
+        authClient.organization
+          .removeMember({
+            memberIdOrEmail, // this can also be the email of the member
+            organizationId: data!.id, // optional, by default it will use the active organization
+          })
+          .then((d) => {
+            if (d.error) throw d.error;
+          }),
+        {
+          loading: "Removing member...",
+          error: (e) => e.message || "Failed to remove member",
+          success: "Successfully removed member.",
+        }
+      );
+    });
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
@@ -45,21 +92,62 @@ export default function Team() {
           <TableHeader>
             <TableRow>
               <TableHead className="">Name</TableHead>
+              <TableHead className="">Email</TableHead>
+
               <TableHead className="w-24">Role</TableHead>
               <TableHead className="w-16"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell className="">Kundan Bhosale</TableCell>
-              <TableCell className="">
-                <Badge className="" variant={"outline"}>
-                  {"Admin"}
-                </Badge>
-              </TableCell>
+            {data?.members.map((m, i) => (
+              <TableRow key={i}>
+                <TableCell className="">{m.user.name}</TableCell>
+                <TableCell className="">{m.user.email}</TableCell>
+                <TableCell className="">
+                  <Select defaultValue={m.role}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Roles</SelectLabel>
+                        <SelectItem value="member">Member</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="owner">Owner</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </TableCell>
 
-              <TableCell className=""></TableCell>
-            </TableRow>
+                <TableCell className="">
+                  <AlertDialog>
+                    <AlertDialogTrigger
+                      className={cn(buttonVariants({ variant: "link" }))}
+                    >
+                      <X />
+                      Remove
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          remove this user from you organization.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => removeMember(m.id)}>
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>

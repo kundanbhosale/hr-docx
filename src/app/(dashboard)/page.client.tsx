@@ -19,9 +19,9 @@ const PageClient = ({
   counts,
 }: AwaitedReturn<typeof getDashboardData>) => {
   const data = {
-    documents: counts?.total,
-    downloaded: counts?.total_downloads,
-    favorites: counts?.favorites,
+    documents: counts?.total || 0,
+    downloaded: counts?.total_downloads || 0,
+    favorites: counts?.favorites || 0,
     drafts: 0,
   };
 

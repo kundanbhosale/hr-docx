@@ -4,15 +4,8 @@ import { pool } from "@/_server/db";
 import { env } from "@/app/env";
 import { sendTransactionalEmail } from "@/features/mailer/server";
 import { betterAuth, BetterAuthOptions } from "better-auth";
-import {
-  createAuthMiddleware,
-  magicLink,
-  organization,
-} from "better-auth/plugins";
+import { magicLink, organization } from "better-auth/plugins";
 import { ac, admin, member, owner } from "./permission";
-import slugify from "slugify";
-import { headers } from "next/headers";
-import { authMiddleware } from "./middleware";
 
 const organizationPlugin = organization({
   schema: {

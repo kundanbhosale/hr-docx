@@ -1,8 +1,8 @@
 "use client";
-import SelectTemplateList from "@/features/templates/client.list";
 import { parseAsString, useQueryState } from "nuqs";
 import React, { useState } from "react";
 import DocPage from "../docPage";
+import { SearchTemplateList } from "@/features/templates/client.list";
 
 const Page = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,7 +15,7 @@ const Page = () => {
           Please Select a template
         </h1>
         <div className="p-8 border bg-muted">
-          <SelectTemplateList
+          <SearchTemplateList
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             onSelect={(e) => setTemplate(e)}

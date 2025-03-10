@@ -1,9 +1,9 @@
 "use client";
 import React, { useState } from "react";
 
-import SearchTemplateList from "@/features/templates/client.list";
 import { Input } from "../ui/input";
 import { Search } from "lucide-react";
+import { SearchTemplateList } from "@/features/templates/client.list";
 
 export const DashboardHeader = ({
   title,
@@ -24,8 +24,8 @@ export const DashboardHeader = ({
         <SearchTemplateList
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          onSelect={(s) => console.log(s)}
           className="h-16 text-lg w-full"
+          onSelect={(c) => console.log(c)}
           popupTrigger={
             <>
               <Input

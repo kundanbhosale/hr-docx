@@ -27,7 +27,8 @@ const DocGenerator = ({
       slug: data?.slug || "",
       content: data?.content || "",
       schema: data?.schema || [],
-      category: "",
+      group: undefined,
+      thumbnail: "",
     },
   });
   const [key, setKey] = useState(0);
@@ -56,6 +57,10 @@ const DocGenerator = ({
             value={content}
             suggestionItems={formState}
             onChange={(e) => form.setValue("content", e || "")}
+            pending={false}
+            open={false}
+            setOpen={undefined}
+            downloadPDF={undefined}
           />
         </div>
       </div>

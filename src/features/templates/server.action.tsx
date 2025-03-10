@@ -42,22 +42,13 @@ export const getPublicTemplates = action(async (props: { search: string }) => {
     .groupBy(["groups.id"]);
 
   if (search) {
-    query = query
-      // .select((eb) => [
-      //   sql<number>`similarity(templates.title, ${eb.val(search)})`.as("score"),
-      // ])
-      .where(
-        (eb) =>
-          sql<boolean>`similarity(templates.title, ${eb.val(search)}) > 0.1`
-      );
-    // .where("groups.title", "ilike", `%${search}%`);
-    // .orderBy(
-    //   (eb) =>
-    //     sql<number>`COALESCE(similarity(templates.title, ${eb.val(
-    //       search
-    //     )}), 0)`,
-    //   "desc"
-    // );
+    query = query.where((eb) =>
+      eb.or([
+        eb("templates.title", "ilike", `%${search}%`),
+        sql<boolean>`similarity(templates.title, ${sql.val(search)}) > 0.3`,
+        sql<boolean>`templates.title % ${sql.val(search)}`,
+      ])
+    );
   }
 
   return await query.execute();
@@ -77,6 +68,7 @@ export const getTemplates = action(async (props: GetTemplatesSchema) => {
       "templates.slug",
       "templates.deleted_at",
       "group",
+      "templates.thumbnail",
     ])
     .where("templates.deleted_at", "is", null); // Ensure deleted_at is always checked
 

@@ -103,7 +103,6 @@ export const useTiptapEditor = ({
 export const DocumentEditor = React.forwardRef<
   HTMLDivElement,
   TiptapProps & {
-    downloads: any;
     pending: any;
     open: any;
     setOpen: any;
@@ -116,7 +115,6 @@ export const DocumentEditor = React.forwardRef<
       onChange,
       className,
       editorContentClassName,
-      downloads,
       pending,
       open,
       setOpen,
@@ -126,14 +124,8 @@ export const DocumentEditor = React.forwardRef<
     },
     ref
   ) => {
-    const {
-      inputFocused,
-      formState,
-      clearFormUpdates,
-      formUpdates,
-      update,
-      progress,
-    } = useDocumentStore();
+    const { formState, clearFormUpdates, formUpdates, update } =
+      useDocumentStore();
 
     const editor = useTiptapEditor({
       value: value,

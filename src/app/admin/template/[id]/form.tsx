@@ -33,6 +33,7 @@ import { SelectCategory } from "@/features/categories/client.combobox";
 import slugify from "slugify";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import MultipleSelector, { Option } from "@/components/ui/multi-select";
+import { captureScreenshot } from "@/lib/screenshot";
 
 const variables = [
   {
@@ -96,7 +97,12 @@ export function TemplateForm({ id }: { id: string }) {
   const form = useFormContext<TemplateFormSchema>();
   // 2. Define a submit handler.
   function onSubmit(values: TemplateFormSchema) {
-    startTransition(() => {
+    startTransition(async () => {
+      const el = document.getElementsByClassName("-tiptap-editor")[0];
+      const thumbnail = await captureScreenshot(el as any);
+
+      values.thumbnail = thumbnail;
+
       if (id === "new") {
         toast.promise(createTemplate(values), {
           loading: "Creating Template...",

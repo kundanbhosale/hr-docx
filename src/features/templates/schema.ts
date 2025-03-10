@@ -12,6 +12,7 @@ export const templateFormSchema = z.object({
   slug: z.string().min(1),
   content: z.string().min(1),
   group: z.string().uuid().optional(),
+  thumbnail: z.string(),
   schema: z.array(
     z.object({
       id: z.string(),
