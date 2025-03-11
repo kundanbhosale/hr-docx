@@ -2,31 +2,38 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Documents</title>
+
     <style>
         * {
             box-sizing: border-box;
         }
 
         .search-input {
-            border: 2px solid #0177FF;
-            width: 100%;
-            font-size: 20px;
-            border-radius: 16px;
-            padding: .4rem .6rem;
+            border: 1.5px solid #0177FF;
+            width: 75%;
+            font-size: 1rem;
+            border-radius: 10px;
+            padding: .2rem .2rem;
             display: flex;
             gap: .4rem;
             align-items: center;
+            overflow: hidden;
+            margin: auto;
+
+        }
+
+        .search-result-wrapper {
+            padding: 1.5rem 0;
         }
 
         input {
             font-size: inherit;
             border: none;
             outline: none;
-            height: 40px;
+            height: 35px;
             width: 100%;
+            flex: 1;
+            padding: 0 .2rem;
         }
 
         .search-result {
@@ -34,6 +41,28 @@
             grid-template-columns: repeat(5, 1fr);
             gap: 1.4rem;
             padding: 1.4rem 0;
+        }
+
+        .explore-btn {
+            font-size: .9rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: #fff;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #0083FD;
+            border: 1xp solid #0083FD;
+            border-radius: 6px;
+            height: 35px;
+            width: 160px;
+            letter-spacing: 1;
+            line-height: 1;
+            padding: .5rem;
+        }
+
+        .explore-btn:hover {
+            opacity: 0.9;
         }
 
         .search-item {}
@@ -106,7 +135,17 @@
 <body>
     <form>
         <div class="search-input">
+            <svg width="24" height="24" style="margin-left: .5rem;" viewBox="0 0 43 43" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M19.7083 34.0417C27.6244 34.0417 34.0417 27.6244 34.0417 19.7083C34.0417 11.7923 27.6244 5.375 19.7083 5.375C11.7923 5.375 5.375 11.7923 5.375 19.7083C5.375 27.6244 11.7923 34.0417 19.7083 34.0417Z"
+                    stroke="#3D3D3D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M37.625 37.625L29.8313 29.8312" stroke="#3D3D3D" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+
             <input id="searchInput" placeholder="Which document are you looking for?" />
+            <a href="https://app.hrdocx.com/document/create" class="explore-btn">Explore Documents</a>
         </div>
         <div id="searchResult" class="search-result-wrapper">
         </div>
@@ -116,7 +155,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             const searchInput = document.getElementById('searchInput');
             const searchResult = document.getElementById('searchResult');
-            const host = "http://localhost:3000"
+            const host = "https://app.hrdocx.com"
 
             let debounceTimeout;
             let abortController;
@@ -165,7 +204,7 @@
                             searchResult.innerHTML = '<div class="status-wrapper"><p>Error fetching data</p></div>';
                         }
                     }
-                }, 500); // 500ms debounce delay
+                }, 300); // 500ms debounce delay
             }
 
             searchInput.addEventListener("input", handleSearch);

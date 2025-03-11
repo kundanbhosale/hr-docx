@@ -1,5 +1,5 @@
 import { db } from "@/_server/db";
-import { sql } from "kysely";
+import { getHost } from "@/lib/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -19,19 +19,28 @@ export async function GET(request: Request) {
       .selectFrom("templates")
       .select((eb) => ["id", "slug", "title", "thumbnail"])
       .where("deleted_at", "is", null)
-      .where((eb) =>
-        eb.or([
-          eb("templates.title", "ilike", `%${search}%`),
-          sql<boolean>`similarity(templates.title, ${sql.val(search)}) >= 0.3`,
-          sql<boolean>`templates.title % ${sql.val(search)}`,
-        ])
-      )
+      .where("templates.title", "ilike", `%${search}%`)
+      // .where((eb) =>
+      //   eb.or([
+      //     eb("templates.title", "ilike", `%${search}%`),
+      //     sql<boolean>`similarity(templates.title, ${sql.val(search)}) >= 0.3`,
+      //     sql<boolean>`templates.title % ${sql.val(search)}`,
+      //   ])
+      // )
       // Order by the similarity score in descending order
-      .orderBy(sql`similarity(templates.title, ${sql.val(search)})`, "desc")
+      // .orderBy(sql`similarity(templates.title, ${sql.val(search)})`, "desc")
       .limit(20)
       .execute();
 
-    return NextResponse.json({ data: result, error: null });
+    const host = await getHost();
+
+    return NextResponse.json({
+      data: result.map((r) => ({
+        ...r,
+        url: `${host}/document/create?template=${r.slug}`,
+      })),
+      error: null,
+    });
   } catch (err) {
     return NextResponse.json({
       data: null,
