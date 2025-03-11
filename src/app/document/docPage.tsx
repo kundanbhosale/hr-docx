@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { captureScreenshot } from "@/lib/screenshot";
 import { authClient } from "@/features/auth/client";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function DocPage({
   documentId,
@@ -61,29 +61,34 @@ export default function DocPage({
       return router.push(
         "/login?cb=" + window.location.pathname + window.location.search
       );
+
+    if (!sess.data?.session.activeOrganizationId) {
+      return router.push("/org");
+    }
     const el = document.getElementsByClassName("-tiptap-editor")[0];
     const thumbnail = await captureScreenshot(el as any);
 
     const exec = async () => {
+      const val = editor?.getHTML();
       if (documentId && documentId !== "new") {
         await updateDocument({
           id: documentId,
           schema: formState,
-          content: editor?.getHTML() || "",
+          content: val || "",
           title,
           thumbnail,
         });
       } else {
         await createDocument({
           schema: formState,
-          content: editor?.getHTML() || "",
+          content: val || "",
           title,
-          template: data?.template!,
+          template: data.template!,
           thumbnail,
         });
       }
       if (!shouldDownload) return;
-      await createPDF(val).then((d) => {
+      await createPDF(val || "").then((d) => {
         const byteCharacters = atob(d);
         const byteNumbers = new Array(byteCharacters.length)
           .fill(null)
@@ -105,7 +110,7 @@ export default function DocPage({
     toast.promise(exec, {
       loading: "Saving Document",
       success: "Succesfully saved document",
-      error: "Failed to save document",
+      error: (e) => e.message || "Failed to save document",
     });
   };
 
@@ -214,7 +219,7 @@ export default function DocPage({
             >
               <ArrowLeft />
             </Button> */}
-              <BackBtn href="/documents" />
+              <BackBtn />
               <h1 className="text-3xl">Fill Information</h1>
             </div>
             <DocumentForm />

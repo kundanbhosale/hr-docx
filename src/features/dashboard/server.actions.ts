@@ -3,13 +3,15 @@
 import { headers } from "next/headers";
 import { auth } from "../auth/server";
 import { db } from "@/_server/db";
+import { redirect } from "next/navigation";
 
 export const getDashboardData = async () => {
   const head = await headers();
   const sess = await auth.api.getSession({ headers: head });
 
-  if (!sess?.session.activeOrganizationId)
-    throw Error("No active organization");
+  if (!sess?.session.activeOrganizationId) {
+    return redirect("/org");
+  }
 
   const [documents, counts] = await Promise.all([
     await db

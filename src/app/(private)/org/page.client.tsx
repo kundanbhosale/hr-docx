@@ -20,7 +20,7 @@ export default function PageClient() {
       });
     });
   };
-
+  console.log("hit", data, isPending);
   return (
     <div className="p-8 min-h-screen flex flex-col bg-muted">
       <div className="flex justify-center items-center mb-10">

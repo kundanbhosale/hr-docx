@@ -63,6 +63,7 @@
 
         .explore-btn:hover {
             opacity: 0.9;
+            color: #fff;
         }
 
         .search-item {}
@@ -165,7 +166,7 @@
 
                 if (query.length === 0) {
                     // searchResult.innerHTML = '<div class="status-wrapper"><p class="">Type to search...</p></div>';
-                    return;
+                    return searchResult.innerHTML = ""
                 }
 
                 searchResult.innerHTML = '<div class="status-wrapper"><span class="loader"></span></div>';

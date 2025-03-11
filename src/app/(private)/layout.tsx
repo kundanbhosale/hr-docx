@@ -9,11 +9,16 @@ export default async function Layout({ children }) {
     headers: head,
   });
   const path = await getPath();
-  if (!data?.session) return redirect("/login");
-
-  if (data?.session) {
-    if (!data?.session.activeOrganizationId && path !== "/org")
-      return redirect("/org");
+  console.log("org", data?.session.activeOrganizationId);
+  if (!data?.session) {
+    return redirect("/login");
+  } else if (
+    data?.session &&
+    !data?.session.activeOrganizationId &&
+    path !== "/org"
+  ) {
+    return redirect("/org");
+  } else {
+    return children;
   }
-  return children;
 }

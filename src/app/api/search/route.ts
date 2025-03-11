@@ -14,7 +14,6 @@ export async function GET(request: Request) {
       .trim()
       .toLowerCase()
       .parse(url.searchParams.get("query") || ""); // Default to empty string if no query provided
-    console.log({ search });
     const result = await db
       .selectFrom("templates")
       .select((eb) => ["id", "slug", "title", "thumbnail"])
@@ -42,6 +41,7 @@ export async function GET(request: Request) {
       error: null,
     });
   } catch (err) {
+    console.log(err);
     return NextResponse.json({
       data: null,
       error: { message: "Failed to load templates" },

@@ -2,55 +2,76 @@ import { createAuthMiddleware } from "better-auth/plugins";
 import { auth } from "./init";
 import { generateSlug } from "@/lib/id";
 import { db } from "@/_server/db";
+import { sql } from "kysely";
 
 export const afterAuthMiddleware = createAuthMiddleware(async (ctx) => {
   try {
     const newSession = ctx.context.newSession;
+    // const cookie = await ctx
+    // .getSignedCookie("better-auth.session_token", ctx.context.secret)
+    // .then((t) => {
+    //   console.log(ctx.context.authCookies[c].name, t);
+    // });
 
     if (!newSession) return;
 
     console.log("New Session");
     if (!newSession.session.activeOrganizationId) {
       console.log("No active organization");
-      let orgSlug = "";
+      let orgId = "";
 
       await db
         .selectFrom("orgs.list")
         .innerJoin("orgs.member", "orgs.member.organizationId", "orgs.list.id")
         .innerJoin("auth.users", "auth.users.id", "orgs.member.userId")
         .where("auth.users.id", "=", newSession!.user.id)
-        .select("orgs.list.slug")
+        .select("orgs.list.id")
         .limit(1)
         .executeTakeFirst()
         .then((o) => {
-          o?.slug && (orgSlug = o?.slug);
+          if (o?.id) {
+            orgId = o?.id;
+          }
         });
 
-      if (!orgSlug) {
+      if (!orgId) {
         console.log("Creating new org");
 
         const slug = generateSlug();
-        await auth.api
-          .createOrganization({
-            headers: ctx.headers,
-            body: {
+
+        await db.transaction().execute(async (trx) => {
+          const org = await trx
+            .insertInto("orgs.list")
+            .values({
+              id: ctx.context.generateId({ model: "organization" }),
               name: slug,
               slug,
-            },
-          })
-          .then((o) => {
-            if (o) {
-              orgSlug = o.slug;
-            }
-          });
+              createdAt: sql`now()`,
+            })
+            .returning(["id", "slug"])
+            .executeTakeFirstOrThrow();
+
+          orgId = org.id;
+
+          await trx
+            .insertInto("orgs.member")
+            .values({
+              id: ctx.context.generateId({ model: "member" }),
+              organizationId: org.id,
+              userId: newSession.user.id,
+              role: "owner",
+              createdAt: sql`now()`,
+            })
+            .execute();
+          console.log("Created new org & member add");
+        });
       }
-      console.log("Activating org - ", orgSlug);
-      await auth.api.setActiveOrganization({
-        headers: ctx.headers,
-        body: {
-          organizationSlug: orgSlug,
-        },
-      });
+      await db
+        .updateTable("auth.sessions")
+        .where("auth.sessions.id", "=", newSession.session.id)
+        .set({ activeOrganizationId: orgId })
+        .execute();
+      console.log("Session updated...");
     }
   } catch (err) {
     console.log(err);
