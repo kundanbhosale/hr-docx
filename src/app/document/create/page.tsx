@@ -1,35 +1,10 @@
-"use client";
-import { parseAsString, useQueryState } from "nuqs";
-import React, { useState } from "react";
-import DocPage from "../docPage";
-import { SearchTemplateList } from "@/features/templates/client.list";
+import React, { Suspense } from "react";
+import PageClient from "./page.client";
 
-const Page = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const [template, setTemplate] = useQueryState("template", parseAsString);
-  if (!template)
-    return (
-      <>
-        <h1 className="text-xl font-semibold text-primary p-4">
-          Please Select a template
-        </h1>
-        <div className="p-8 border bg-muted">
-          <SearchTemplateList
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            onSelect={(e) => setTemplate(e)}
-            className="h-14 text-lg z-50 mb-10"
-          />
-        </div>
-      </>
-    );
-
+export default function Page() {
   return (
-    <>
-      <DocPage documentId="new" templateId={template} />
-    </>
+    <Suspense>
+      <PageClient />
+    </Suspense>
   );
-};
-
-export default Page;
+}
