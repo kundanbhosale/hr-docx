@@ -6,7 +6,6 @@ import { sendTransactionalEmail } from "@/features/mailer/server";
 import { betterAuth, BetterAuthOptions } from "better-auth";
 import { magicLink, organization } from "better-auth/plugins";
 import { ac, admin, member, owner } from "./permission";
-import { afterAuthMiddleware } from "./middleware";
 
 const organizationPlugin = organization({
   schema: {

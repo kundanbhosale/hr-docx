@@ -1,6 +1,5 @@
 import { createAuthMiddleware } from "better-auth/plugins";
 import { auth } from "./init";
-import { headers } from "next/headers";
 import { generateSlug } from "@/lib/id";
 import { db } from "@/_server/db";
 

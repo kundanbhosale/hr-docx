@@ -1,16 +1,16 @@
 import { buttonVariants } from "@/components/ui/button";
 import { getSingleCategory } from "@/features/categories/server.action";
-import { getTemplates } from "@/features/templates/server.action";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
 import TemplatesTable from "./table";
+import { getTemplatesGroup } from "@/features/templates/server.action";
 
 const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const slug = (await params).slug;
-  const data = await getTemplates({
+  const data = await getTemplatesGroup({
     group: slug,
   });
   const { data: cat } =

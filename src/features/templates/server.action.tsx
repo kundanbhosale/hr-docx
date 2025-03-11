@@ -1,8 +1,6 @@
 "use server";
 import { db } from "@/_server/db";
 import {
-  getTemplatesSchema,
-  GetTemplatesSchema,
   SingleTemplateSchema,
   singleTemplateSchema,
   templateFormSchema,
@@ -55,10 +53,10 @@ export const getPublicTemplates = action(async (props: { search: string }) => {
   return result;
 });
 
-export const getTemplates = action(async (props: GetTemplatesSchema) => {
-  const { search, group } = getTemplatesSchema.parse(props);
+export const getTemplatesGroup = action(async (props: { group: string }) => {
+  const { group } = z.object({ group: z.string() }).parse(props);
 
-  let query = db
+  return await db
     .selectFrom("templates")
     .select([
       "templates.content",
@@ -71,30 +69,15 @@ export const getTemplates = action(async (props: GetTemplatesSchema) => {
       "group",
       "templates.thumbnail",
     ])
-    .where("templates.deleted_at", "is", null); // Ensure deleted_at is always checked
-
-  if (search) {
-    query = query
-      .select((eb) => [sql<number>`similarity(title, ${search})`.as("score")])
-      .where((eb) => sql<boolean>`similarity(title, ${search}) > 0.1`)
-      .orderBy("score", "desc");
-  }
-
-  if (group) {
-    query = query
-      .leftJoin("groups", "groups.id", "templates.group") // Ensure correct table reference
-      .where(
-        "groups.slug",
-        group === "un-categorized" ? "is" : "=",
-        group === "un-categorized" ? null : group
-      );
-  }
-
-  if (!search && !group) {
-    query = query.orderBy("templates.created_at", "desc").limit(50);
-  }
-
-  return await query.execute();
+    .leftJoin("groups", "groups.id", "templates.group") // Ensure correct table reference
+    .where(
+      "groups.slug",
+      group === "un-categorized" ? "is" : "=",
+      group === "un-categorized" ? null : group
+    )
+    .where("templates.deleted_at", "is", null) // Ensure deleted_at is always checked
+    .orderBy("templates.created_at", "desc")
+    .execute();
 });
 
 export const getSingleTemplate = action(async (props: SingleTemplateSchema) => {

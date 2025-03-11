@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 import {
   deleteTemplate,
-  getTemplates,
+  getTemplatesGroup,
 } from "@/features/templates/server.action";
 import { AwaitedReturn } from "@/lib/types";
 import { RefreshCw, Trash } from "lucide-react";
@@ -26,7 +26,7 @@ import Image from "next/image";
 export default function TemplatesTable({
   data,
 }: {
-  data: AwaitedReturn<typeof getTemplates>;
+  data: AwaitedReturn<typeof getTemplatesGroup>;
 }) {
   const router = useRouter();
   const [deletes, setDeletes] = useState<string[]>([]);

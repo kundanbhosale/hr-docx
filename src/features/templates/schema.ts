@@ -24,10 +24,11 @@ export const templateFormSchema = z.object({
   ),
 });
 
-export const getTemplatesSchema = z.object({
-  search: z.string().optional(),
-  group: z.string().optional(),
-});
+// export const getTemplatesSchema = z.object({
+//   search: z.string().optional(),
+//   limit: z.number().int().min(10).max(50).optional().default(10),
+//   group: z.string().optional(),
+// });
 
 export const singleTemplateSchema = z.object({
   id: z.string().optional(),
@@ -36,6 +37,6 @@ export const singleTemplateSchema = z.object({
 
 export type SingleTemplateSchema = z.infer<typeof singleTemplateSchema>;
 
-export type GetTemplatesSchema = z.infer<typeof getTemplatesSchema>;
+// export type GetTemplatesSchema = z.infer<typeof getTemplatesSchema>;
 
 export type TemplateFormSchema = z.infer<typeof templateFormSchema>;
