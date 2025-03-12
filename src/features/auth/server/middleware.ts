@@ -1,5 +1,4 @@
 import { createAuthMiddleware } from "better-auth/plugins";
-import { auth } from "./init";
 import { generateSlug } from "@/lib/id";
 import { db } from "@/_server/db";
 import { sql } from "kysely";
@@ -38,13 +37,15 @@ export const afterAuthMiddleware = createAuthMiddleware(async (ctx) => {
         console.log("Creating new org");
 
         const slug = generateSlug();
-
+        const splitted = Array.from(slug.split("-"));
+        splitted.pop();
+        const name = splitted.join(" ");
         await db.transaction().execute(async (trx) => {
           const org = await trx
             .insertInto("orgs.list")
             .values({
               id: ctx.context.generateId({ model: "organization" }),
-              name: slug,
+              name,
               slug,
               createdAt: sql`now()`,
             })

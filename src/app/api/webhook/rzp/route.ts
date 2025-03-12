@@ -1,66 +1,81 @@
 // import { db } from "@/_server/db";
+import { db } from "@/_server/db";
+import { appConfig } from "@/app.config";
 import { env } from "@/app/env";
-import { Subscriptions } from "razorpay/dist/types/subscriptions";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 
 const relevantEvents = new Set([
-  "product.created",
-  "product.updated",
-  "product.deleted",
-  "price.created",
-  "price.updated",
-  "price.deleted",
-  "customer.subscription.created",
-  "customer.subscription.updated",
-  "customer.subscription.deleted",
+  // "product.created",
+  // "product.updated",
+  // "product.deleted",
+  // "price.created",
+  // "price.updated",
+  // "price.deleted",
+  "order.paid",
+  "subscription.charged",
+  "subscription.updated",
+  "subscription.deleted",
 ]);
 
 const manageSubscriptionStatusChange = async (
   subscription: Subscriptions.RazorpaySubscription
 ) => {
-  console.log(subscription);
-  //   const sub = await stripe().subscriptions.retrieve(subscription.id, {
-  //     expand: ["plan.product", "latest_invoice"],
-  //   });
-  //   await db
-  //     .updateTable("orgs.list")
-  //     .where("id", "=", subscription.metadata.org_id)
-  //     .set({
-  //       subscription: {
-  //         id: subscription.id,
-  //         provider: "stripe",
-  //         active: subscription.status === "active",
-  //         plan: (sub as any).plan.product.name,
-  //       },
-  //       limits: {
-  //         seats: subscription.items.data[0].quantity || 1,
-  //       },
-  //     })
-  //     .executeTakeFirst();
-  //   await delCache(redisKeys.org.single(subscription.metadata.org_id));
+  console.log("Updating subscription...");
+  const plan = appConfig.plans.find((f) => f.id === subscription.plan_id);
+  if (!plan) throw Error("Plan not found");
+
+  await db
+    .updateTable("orgs.list")
+    .where("orgs.list.id", "=", subscription.notes.org_id)
+    .set({
+      metadata: {
+        subscription: {
+          id: subscription.id,
+          status: subscription.status,
+          current_start:
+            (subscription.current_start &&
+              Number(subscription.current_start * 1000)) ||
+            0,
+          current_end:
+            (subscription.current_end &&
+              Number(subscription.current_end * 1000)) ||
+            0,
+          plan: subscription.plan_id,
+        },
+        credits: plan.credits,
+      },
+    })
+    .execute();
+  console.log("Updated subscription...");
 };
 
 export async function POST(req: Request) {
-  const body = await req.text();
+  const body = await req.json();
+
   const sig = req.headers.get("x-razorpay-signature") as string;
   const webhookSecret = env.RAZORPAY_WEBHOOK_SECRET;
-  const { event, payload } = await req.json();
+  const { event, payload } = body;
 
   try {
     if (!sig || !webhookSecret)
       return new Response("Webhook secret not found.", { status: 400 });
-    const isValid = validateWebhookSignature(body, String(sig), webhookSecret);
+    const isValid = validateWebhookSignature(
+      JSON.stringify(body),
+      String(sig),
+      webhookSecret
+    );
     if (!isValid) throw Error("Permission denied.");
 
-    console.log(`🔔  Webhook received: ${event.type}`);
+    console.log(`🔔  Webhook received: ${event}`);
   } catch (err: any) {
     console.log(`❌ Error message: ${err.message}`);
     return new Response(`Webhook Error: ${err.message}`, { status: 400 });
   }
+  console.log(body);
 
-  if (relevantEvents.has(event.type)) {
+  if (relevantEvents.has(event)) {
     try {
-      switch (event.type) {
+      switch (event) {
         // case "order.paid":
 
         case "subscription.charged":

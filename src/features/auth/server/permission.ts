@@ -11,26 +11,32 @@ import {
  */
 const statement = {
   ...defaultStatements,
-  subscription: ["create", "update", "delete"],
+  payments: ["create", "read"],
+  subscription: ["read", "create", "update", "delete"],
   documents: ["read", "create", "update", "delete"],
 } as const;
 
 export const ac = createAccessControl(statement);
 
 export const member = ac.newRole({
-  subscription: [],
+  payments: [],
+
+  subscription: ["read"],
   documents: ["read", "create", "update", "delete"],
   ...memberAc.statements,
 });
 
 export const admin = ac.newRole({
-  subscription: ["create", "update"],
+  payments: [],
+
+  subscription: ["read"],
   documents: ["read", "create", "update", "delete"],
   ...adminAc.statements,
 });
 
 export const owner = ac.newRole({
-  subscription: ["create", "update", "delete"],
+  payments: ["create", "read"],
+  subscription: ["read", "create", "update", "delete"],
   documents: ["read", "create", "update", "delete"],
   ...ownerAc.statements,
 });

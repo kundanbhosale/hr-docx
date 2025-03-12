@@ -9,7 +9,7 @@ import type { TableRowOptions } from "@tiptap/extension-table-row";
 import type { TableCellBackgroundOptions } from "./cell-background";
 import { TableCellBackground } from "./cell-background";
 import TableActionButton from "@/extensions/Table/components/TableActionButton";
-import type { GeneralOptions } from "@/types";
+import type { GeneralOptions } from "types";
 
 export interface TableOptions extends GeneralOptions<TableOptions> {
   HTMLAttributes: Record<string, any>;

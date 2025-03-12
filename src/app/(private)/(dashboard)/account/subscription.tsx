@@ -6,8 +6,7 @@ import React, { useTransition } from "react";
 //   getSubscription,
 // } from "@/features/stripe/server.actions";
 import { format } from "date-fns";
-import { ArrowUpRight, Download, ExternalLink } from "lucide-react";
-import { toast } from "sonner";
+import { ExternalLink } from "lucide-react";
 
 import { formatAmount } from "@/lib/intl";
 import { Badge } from "@/components/ui/badge";
@@ -22,22 +21,37 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import EmptyPage from "@/components/pages/empty";
+import { authClient } from "@/features/auth/client";
+import { AuthSessions, OrgsList } from "@/_server/db/types";
+import { useQuery } from "@tanstack/react-query";
+import { Session } from "better-auth";
+import { getSubscriptionAndPayments } from "@/features/payments/server.actions";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function SubscriptionInfo({ data }: { data: null }) {
-  const [pending, trans] = useTransition();
+export default function SubscriptionInfo({
+  session,
+}: {
+  session: AuthSessions;
+}) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["sub", session?.activeOrganizationId],
+    queryFn: () => getSubscriptionAndPayments(),
+    enabled: !!session?.activeOrganizationId,
+  });
 
-  const handleClick = () => {
-    // trans(async () => {
-    //   await getCustomerPortalStripe({})
-    //     .then((e) => {
-    //       console.log(e);
-    //       window.open(e, "_ blank");
-    //     })
-    //     .catch((err) => {
-    //       toast.error(err.message || "Failed to open customer portal.");
-    //     });
-    // });
-  };
+  const sub = data?.data?.sub;
+  const plan = data?.data?.plan;
+  const invoices = null;
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="w-full h-[200px]" />
+        {[...Array(6)].map((a, i) => (
+          <Skeleton key={i} className="w-full h-[40px]" />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -46,15 +60,7 @@ export default function SubscriptionInfo({ data }: { data: null }) {
           <CardTitle>Current Subscription</CardTitle>
           <div className="relative flex justify-end">
             <div className="absolute -bottom-5 right-0 flex gap-4">
-              <Button
-                variant="outline"
-                size={"sm"}
-                onClick={handleClick}
-                disabled={pending}
-              >
-                Customer Portal <ArrowUpRight />
-              </Button>
-              <Button size={"sm"} disabled={pending}>
+              <Button size={"sm"} disabled={true}>
                 Upgrade Plan
               </Button>
             </div>
@@ -65,24 +71,18 @@ export default function SubscriptionInfo({ data }: { data: null }) {
             <div className="grid grid-cols-[250px,auto] gap-4">
               <p className="text-muted-foreground">Plan</p>
               <p className="flex flex-wrap gap-2">
-                <Badge variant="outline">
-                  {data?.sub.plan || "Unknown Plan"}
-                </Badge>
+                <Badge variant="outline">{plan?.name || "Unknown Plan"}</Badge>
               </p>
               <p className="text-muted-foreground">Current Period</p>
               <p>
-                {data?.sub?.start_date && format(data?.sub?.start_date, "PP")} -{" "}
-                {data?.sub?.end_date && format(data?.sub?.end_date, "PP")}
+                {sub?.current_start && format(sub.current_start, "PP")} -{" "}
+                {sub?.current_end && format(sub.current_end, "PP")}
               </p>
               <p className="text-muted-foreground">Price</p>
               <p>
-                {formatAmount(
-                  data?.sub.currency,
-                  Number(data?.sub.price) || 0,
-                  {
-                    fractionDigits: 2,
-                  }
-                )}
+                {formatAmount("INR", Number(plan?.prices.inr || 0) || 0, {
+                  fractionDigits: 2,
+                })}
               </p>
               {/* <p className="text-muted-foreground ">Total Seats</p>
               <p>
@@ -108,8 +108,8 @@ export default function SubscriptionInfo({ data }: { data: null }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data?.invoices?.length > 0 ? (
-                data?.invoices?.map((d, i) => (
+              {invoices && invoices?.length > 0 ? (
+                invoices?.map((d, i) => (
                   <TableRow key={i}>
                     <TableCell className="py-4">{d.number}</TableCell>
 

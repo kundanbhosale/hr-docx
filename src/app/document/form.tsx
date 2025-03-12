@@ -12,24 +12,21 @@ import Loading from "@/components/common/loading";
 import { TemplateFormSchema } from "@/features/templates/schema";
 
 export function DocumentForm() {
-  const { formState, setFormValue, progress } = useDocumentStore();
+  const { formState, setFormValue, progress, nodeFocused, update } =
+    useDocumentStore();
   const [loading, setLoading] = useState(true);
   const onSubmit = (vals) => {
     console.log(vals);
   };
 
-  useEffect(() => {
-    const onHashChanged = () => {
-      const name = window.location.hash.split(":")[1];
-      document.getElementsByName(name)[0]?.focus();
-    };
+  // useEffect(() => {
+  //   const onHashChanged = () => {
+  //     const name = window.location.hash.split(":")[1];
+  //     document.getElementsByName(name)[0]?.focus();
+  //   };
 
-    window.addEventListener("hashchange", onHashChanged);
-
-    return () => {
-      window.removeEventListener("hashchange", onHashChanged);
-    };
-  }, []);
+  //   onHashChanged();
+  // }, [nodeFocused]);
 
   function handleConfetti() {
     confetti({
@@ -114,10 +111,11 @@ export function DocumentForm() {
                 schema={f}
                 onChange={(value) => debounced(f.id, value)}
                 onFocus={() => {
-                  window.location.hash = f.id;
+                  console.log("id", f.id);
+                  update({ nodeFocused: f.id });
                 }}
                 onBlur={() => {
-                  window.location.hash = "";
+                  update({ nodeFocused: "" });
                 }}
               />
               {/* <p className="text-xs text-muted-foreground mt-px">{f.desc}</p> */}

@@ -90,7 +90,10 @@ export const TemplatesList = ({
               <Fragment key={i}>
                 <div
                   className="grid"
-                  id={idPrefix + (k.group.slug || "un-categorized")}
+                  id={`${
+                    (idPrefix ? `${idPrefix}-` : "") +
+                    (k.group.slug || "un-categorized")
+                  }`}
                 >
                   <div>
                     <h1
@@ -189,8 +192,10 @@ export function SearchTemplateList({
   setSearchQuery,
   className,
   popupTrigger,
+  idPrefix,
 }: {
   searchQuery: string;
+  idPrefix?: string;
   setSearchQuery: (val: string) => void;
   onSelect: (string) => void;
   className?: string;
@@ -212,7 +217,7 @@ export function SearchTemplateList({
     />
   );
   const List = (
-    <TemplatesList search={search} onSelect={onSelect} idPrefix="search" />
+    <TemplatesList search={search} onSelect={onSelect} idPrefix={idPrefix} />
   );
 
   if (popupTrigger)

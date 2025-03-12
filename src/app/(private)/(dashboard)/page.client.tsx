@@ -17,6 +17,7 @@ import React from "react";
 const PageClient = ({
   documents,
   counts,
+  sub,
 }: AwaitedReturn<typeof getDashboardData>) => {
   const data = {
     documents: counts?.total || 0,
@@ -69,21 +70,19 @@ const PageClient = ({
           <div className="bg-background rounded-md space-y-4 p-4 [&_p]:text-muted-foreground">
             <div className="flex justify-between gap-2">
               <Label>Current Plan</Label>
-              <p>Half Yearly</p>
+              <p>{sub.plan || "Free"}</p>
             </div>
             <div className="flex justify-between gap-2">
               <Label>Total Monthly Downloads</Label>
-              <p>25</p>
+              <p>{sub.total}</p>
             </div>
             <div className="flex justify-between gap-2">
               <Label>Monthly Downloads Remaining</Label>
-              <p>12</p>
+              <p>{sub.credits.download}</p>
             </div>
             <div className="flex justify-between gap-2">
               <Label>Period</Label>
-              <p>
-                {format(new Date(), "PP")} - {format(new Date(), "PP")}
-              </p>
+              <p>{sub.period}</p>
             </div>
             <div className="pt-5">
               <Link

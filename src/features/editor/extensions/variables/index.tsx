@@ -188,9 +188,9 @@ export const Variable = Node.create<VariableOptions>({
           return {
             tabindex: 0,
             "data-id": attributes.id,
-            onclick: useDocumentStore
-              .getState()
-              .update({ nodeFocused: attributes.id }),
+            // onclick: useDocumentStore
+            //   .getState()
+            //   .update({ nodeFocused: attributes.id }),
             // onmouseover: `window.location.hash='node:${attributes.id}'`,
           };
         },

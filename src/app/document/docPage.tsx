@@ -170,31 +170,33 @@ export default function DocPage({
   }}
     `;
     document.body.appendChild(style);
+  }, []);
 
+  useEffect(() => {
     const onHashChanged = () => {
       const hash = nodeFocused;
+      console.log(hash);
+      if (!hash) return;
       const container = document.getElementById("editor-container");
-      const el = document.querySelector(`[data-id="${hash}"]`) as HTMLElement;
-      if (!el || !container) return;
+      const el = Array.from(document.querySelectorAll(`[data-id="${hash}"]`));
+      if (!el || el.length === 0 || !container) return;
       Array.from(document.getElementsByClassName(focusedClass[0])).forEach(
         (e: any) => {
           e.classList.remove(...focusedClass);
         }
       );
-      el.classList.add(...focusedClass);
+      el.map((e) => {
+        e.classList.add(...focusedClass);
+      });
+
       // Get the element's position relative to the container
       const containerTop = container.getBoundingClientRect().top;
-      const elementTop = el.getBoundingClientRect().top;
+      const elementTop = el[0].getBoundingClientRect().top;
       const y = elementTop - containerTop + container.scrollTop - 100; // Adjust scrollTop here
       // Smooth scroll to the calculated position
       container.scrollTo({ top: y, behavior: "smooth" });
     };
-
-    window.addEventListener("hashchange", onHashChanged);
-
-    return () => {
-      window.removeEventListener("hashchange", onHashChanged);
-    };
+    onHashChanged();
   }, [nodeFocused]);
 
   return (
@@ -291,7 +293,7 @@ export default function DocPage({
               placeholder="Write something here"
               value={data?.content || ""}
               suggestionItems={formState}
-              onChange={(e) => console.log(e)}
+              onChange={(e) => e}
               open={open}
               setOpen={setOpen}
               downloads={downloads}

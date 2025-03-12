@@ -81,7 +81,7 @@ export interface AuthVerifications {
 export interface Documents {
   content: string;
   created_at: Generated<Timestamp | null>;
-  created_by: string;
+  created_by: string | null;
   deleted_at: Timestamp | null;
   downloads: Generated<number>;
   id: string;
@@ -125,7 +125,10 @@ export interface OrgsList {
   createdAt: Timestamp;
   id: string;
   logo: string | null;
-  metadata: string | null;
+  /**
+   * @type:{subscription:{id:string,status:string,current_start:number,current_end:number,plan:string},credits:{download:number}}
+   */
+  metadata: {subscription:{id:string,status:string,current_start:number,current_end:number,plan:string},credits:{download:number}}
   name: string;
   slug: string;
 }

@@ -19,6 +19,9 @@ export const appConfig = {
         value: 3,
         frequency: "months",
       },
+      credits: {
+        download: 150,
+      },
     },
   ],
 };

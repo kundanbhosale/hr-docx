@@ -117,7 +117,7 @@ export default function CompanyLayout() {
               ) : view === "team" ? (
                 <Team />
               ) : view === "subscription" ? (
-                <SubscriptionInfo data={null} />
+                <SubscriptionInfo session={data?.session} />
               ) : null}
             </div>
           </div>
