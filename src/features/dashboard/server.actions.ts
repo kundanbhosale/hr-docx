@@ -39,10 +39,18 @@ export const getDashboardData = async () => {
       .selectAll()
       .executeTakeFirstOrThrow(),
   ]);
-
-  const sub = await razorpay.subscriptions.fetch(org.metadata.subscription.id);
-
-  const plan = appConfig.plans.find((p) => p.id === sub.plan_id);
+  let plan: (typeof appConfig.plans)[0] | null = null;
+  let sub: Subscriptions.RazorpaySubscription | null = null;
+  if (org.metadata?.subscription?.id) {
+    sub = (await razorpay.subscriptions.fetch(
+      org.metadata?.subscription?.id
+    )) as Subscriptions.RazorpaySubscription;
+    if (sub) {
+      plan = appConfig.plans.find(
+        (p) => p.id === sub?.plan_id
+      ) as (typeof appConfig.plans)[0];
+    }
+  }
 
   return {
     documents,
@@ -50,7 +58,7 @@ export const getDashboardData = async () => {
     sub: {
       plan: plan?.name,
       total: plan?.credits.download,
-      credits: org.metadata.credits,
+      credits: org?.metadata?.credits,
       period: `${
         sub?.current_start && format(sub.current_start * 1000, "PP")
       } - ${sub?.current_end && format(sub.current_end * 1000, "PP")}`,

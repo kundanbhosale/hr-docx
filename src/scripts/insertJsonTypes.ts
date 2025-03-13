@@ -25,7 +25,7 @@ const transformFile = async () => {
 
   const content = readFileSync(filePath, "utf-8");
   const lines = content.split("\n");
-  let dbInterfaceLineIndex = lines.findIndex((line) => {
+  const dbInterfaceLineIndex = lines.findIndex((line) => {
     return line === "export interface DB {";
   });
 
@@ -64,6 +64,7 @@ const transformFile = async () => {
       ": ArrayType<Json> | null;",
       ": ArrayType<Json>",
       ": Generated<ArrayType<Json>>;",
+      ": Generated<Json | null>;",
     ];
 
     const matchIdx = matches.findIndex((m) => line.includes(m));

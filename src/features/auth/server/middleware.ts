@@ -48,6 +48,12 @@ export const afterAuthMiddleware = createAuthMiddleware(async (ctx) => {
               name,
               slug,
               createdAt: sql`now()`,
+              metadata: {
+                subscription: null,
+                credits: {
+                  download: 0,
+                },
+              },
             })
             .returning(["id", "slug"])
             .executeTakeFirstOrThrow();

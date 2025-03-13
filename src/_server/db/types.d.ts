@@ -126,9 +126,9 @@ export interface OrgsList {
   id: string;
   logo: string | null;
   /**
-   * @type:{subscription:{id:string,status:string,current_start:number,current_end:number,plan:string},credits:{download:number}}
+   * @type:{subscription:{id:string,status:string,current_start:number,current_end:number,plan:string} | null, credits:{download:number}}
    */
-  metadata: {subscription:{id:string,status:string,current_start:number,current_end:number,plan:string},credits:{download:number}}
+  metadata: {subscription:{id:string,status:string,current_start:number,current_end:number,plan:string} | null, credits:{download:number}}
   name: string;
   slug: string;
 }
