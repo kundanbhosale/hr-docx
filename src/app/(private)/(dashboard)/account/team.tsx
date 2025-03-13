@@ -104,7 +104,7 @@ export default function Team() {
                 <TableCell className="">{m.user.name}</TableCell>
                 <TableCell className="">{m.user.email}</TableCell>
                 <TableCell className="">
-                  <Select defaultValue={m.role}>
+                  <Select defaultValue={m.role} disabled={true}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
