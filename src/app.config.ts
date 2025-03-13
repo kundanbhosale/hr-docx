@@ -1,3 +1,5 @@
+import { env } from "./app/env";
+
 export const appConfig = {
   title: {
     short: "HR Docx",
@@ -29,7 +31,7 @@ export const appConfig = {
     },
     {
       name: "Quarterly",
-      id: "plan_Q6DNQfQF1aTp6s",
+      id: env.IN_PROD ? "plan_Q6DNQfQF1aTp6s" : "plan_Q6DNQfQF1aTp6s",
       prices: {
         inr: 2999,
       },
@@ -51,7 +53,7 @@ export const appConfig = {
     },
     {
       name: "Half Yearly",
-      id: "plan_Q6DKyyEGep4N3x",
+      id: env.IN_PROD ? "plan_Q6DKyyEGep4N3x" : "plan_Q6DKyyEGep4N3x",
       prices: {
         inr: 4999,
       },
@@ -73,7 +75,7 @@ export const appConfig = {
     },
     {
       name: "Yearly",
-      id: "plan_Q6DNQfQF1aTp6s",
+      id: env.IN_PROD ? "plan_Q6DMJymKWmP8hN" : "plan_Q6DMJymKWmP8hN",
       prices: {
         inr: 9999,
       },

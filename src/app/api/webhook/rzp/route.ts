@@ -14,7 +14,8 @@ const relevantEvents = new Set([
   "order.paid",
   "subscription.charged",
   "subscription.updated",
-  "subscription.deleted",
+  "subscription.cancelled",
+  "subscription.completed",
 ]);
 
 const manageSubscriptionStatusChange = async (
