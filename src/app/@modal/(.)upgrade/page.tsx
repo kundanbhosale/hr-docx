@@ -1,7 +1,7 @@
+import UpgradePage from "@/app/upgrade/page.client";
 import React, { Suspense } from "react";
-import UpgradePage from "./page.client";
 
-export default function Page() {
+export default function Login() {
   return (
     <Suspense>
       <UpgradePage />
