@@ -64,7 +64,7 @@ export const getDashboardData = async () => {
           ? `${
               sub?.current_start && format(sub.current_start * 1000, "PP")
             } - ${sub?.current_end && format(sub.current_end * 1000, "PP")}`
-          : "Un-known",
+          : "-",
     },
   };
 };
