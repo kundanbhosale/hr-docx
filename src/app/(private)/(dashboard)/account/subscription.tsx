@@ -21,10 +21,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import EmptyPage from "@/components/pages/empty";
-import { authClient } from "@/features/auth/client";
-import { AuthSessions, OrgsList } from "@/_server/db/types";
+import { AuthSessions } from "@/_server/db/types";
 import { useQuery } from "@tanstack/react-query";
-import { Session } from "better-auth";
 import { getSubscriptionAndPayments } from "@/features/payments/server.actions";
 import { Skeleton } from "@/components/ui/skeleton";
 

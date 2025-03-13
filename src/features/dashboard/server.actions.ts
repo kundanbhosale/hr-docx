@@ -7,8 +7,9 @@ import { redirect } from "next/navigation";
 import { razorpay } from "../payments/server.init";
 import { appConfig } from "@/app.config";
 import { format } from "date-fns";
+import { action } from "@/lib/error";
 
-export const getDashboardData = async () => {
+export const getDashboardData = action(async () => {
   const head = await headers();
   const sess = await auth.api.getSession({ headers: head });
 
@@ -67,4 +68,4 @@ export const getDashboardData = async () => {
           : "-",
     },
   };
-};
+};)

@@ -8,23 +8,21 @@ import { getDashboardData } from "@/features/dashboard/server.actions";
 import { CreateBtn } from "@/features/documents/components/createbtn";
 import { AwaitedReturn } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const PageClient = ({
-  documents,
-  counts,
-  sub,
-}: AwaitedReturn<typeof getDashboardData>) => {
+const PageClient = (props: AwaitedReturn<typeof getDashboardData>["data"]) => {
   const data = {
-    documents: counts?.total || 0,
-    downloaded: counts?.total_downloads || 0,
-    favorites: counts?.favorites || 0,
+    documents: props?.counts?.total || 0,
+    downloaded: props?.counts?.total_downloads || 0,
+    favorites: props?.counts?.favorites || 0,
     drafts: 0,
   };
+
+  const documents = props?.documents;
+  const sub = props?.sub;
 
   const cardCls = {
     title: "text-lg font-medium text-primary-foreground",
@@ -70,19 +68,19 @@ const PageClient = ({
           <div className="bg-background rounded-md space-y-4 p-4 [&_p]:text-muted-foreground">
             <div className="flex justify-between gap-2">
               <Label>Current Plan</Label>
-              <p>{sub.plan || "Free"}</p>
+              <p>{sub?.plan || "Free"}</p>
             </div>
             <div className="flex justify-between gap-2">
               <Label>Total Monthly Downloads</Label>
-              <p>{sub.total}</p>
+              <p>{sub?.total}</p>
             </div>
             <div className="flex justify-between gap-2">
               <Label>Monthly Downloads Remaining</Label>
-              <p>{sub.credits.download}</p>
+              <p>{sub?.credits.download}</p>
             </div>
             <div className="flex justify-between gap-2">
               <Label>Period</Label>
-              <p>{sub.period}</p>
+              <p>{sub?.period}</p>
             </div>
             <div className="pt-5">
               <Link
@@ -122,7 +120,9 @@ const PageClient = ({
 function Docs({
   documents,
 }: {
-  documents: AwaitedReturn<typeof getDashboardData>["documents"];
+  documents:
+    | NonNullable<AwaitedReturn<typeof getDashboardData>["data"]>["documents"]
+    | undefined;
 }) {
   return (
     <div className="">
@@ -131,7 +131,7 @@ function Docs({
       </h1>
       <div className="flex flex-wrap gap-x-8 gap-y-10">
         <CreateBtn />
-        {documents.map((t, i) => (
+        {documents?.map((t, i) => (
           <Link
             href={"document/" + t.id}
             key={i}
