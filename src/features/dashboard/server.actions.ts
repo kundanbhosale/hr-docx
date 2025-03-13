@@ -56,12 +56,15 @@ export const getDashboardData = async () => {
     documents,
     counts,
     sub: {
-      plan: plan?.name,
-      total: plan?.credits.download,
-      credits: org?.metadata?.credits,
-      period: `${
-        sub?.current_start && format(sub.current_start * 1000, "PP")
-      } - ${sub?.current_end && format(sub.current_end * 1000, "PP")}`,
+      plan: plan?.name || "Free",
+      total: plan?.credits.download || 0,
+      credits: org?.metadata?.credits || 0,
+      period:
+        sub?.current_start && sub?.current_end
+          ? `${
+              sub?.current_start && format(sub.current_start * 1000, "PP")
+            } - ${sub?.current_end && format(sub.current_end * 1000, "PP")}`
+          : "Un-known",
     },
   };
 };
