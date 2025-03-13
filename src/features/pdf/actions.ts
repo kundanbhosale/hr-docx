@@ -3,6 +3,10 @@ import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 
 import { getHost } from "@/lib/headers";
+import { hasPermission } from "../auth/server/actions";
+import { db } from "@/_server/db";
+import { sql } from "kysely";
+import { action } from "@/lib/error";
 
 async function getBrowser() {
   return puppeteer.launch({
@@ -18,14 +22,22 @@ async function getBrowser() {
   });
 }
 
-export async function createPDF(html: string) {
-  const browser = await getBrowser();
-  // const browser = await puppeteer.launch({
-  //   headless: false,
-  //   executablePath:
-  //     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-  // });
+export const createPDF = action(async (html: string) => {
+  const { session } = await hasPermission({
+    permission: {
+      documents: ["read"],
+    },
+  });
 
+  const org = await db
+    .selectFrom("orgs.list")
+    .where("id", "=", session.activeOrganizationId!)
+    .selectAll()
+    .executeTakeFirstOrThrow();
+
+  if (org.metadata.credits.download <= 0) throw Error("No credits left");
+
+  const browser = await getBrowser();
   const page = await browser.newPage();
   const url = (await getHost()) + "/editor.css";
   await page.setContent(
@@ -55,5 +67,17 @@ export async function createPDF(html: string) {
     margin: { top: "1cm", right: "1cm", bottom: "1cm", left: "1cm" },
   });
   await browser.close();
+  const creditsLeft =
+    (org.metadata.credits && Number(org.metadata.credits) - 1) || 0;
+  await db
+    .updateTable("orgs.list")
+    .set({
+      metadata: sql`jsonb_set(metadata, '{credits,download}', ${sql.val(
+        creditsLeft <= 0 ? 0 : creditsLeft
+      )}::jsonb)`,
+    })
+    .where("id", "=", session.activeOrganizationId!)
+    .execute();
+
   return Buffer.from(pdfBuffer).toString("base64");
-}
+});

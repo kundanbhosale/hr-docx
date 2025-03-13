@@ -13,7 +13,9 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const PageClient = (props: AwaitedReturn<typeof getDashboardData>["data"]) => {
+const PageClient = (
+  props: AwaitedReturn<typeof getDashboardData>["data"] | undefined
+) => {
   const data = {
     documents: props?.counts?.total || 0,
     downloaded: props?.counts?.total_downloads || 0,

@@ -10,17 +10,86 @@ export const appConfig = {
   },
   plans: [
     {
-      name: "Quarterly",
-      id: "plan_PxUR9JHBuaKCOM",
+      name: "Pay Per Doc",
+      id: "ppd",
       prices: {
-        inr: 4999,
+        inr: 299,
+      },
+
+      features: {
+        documents: 1,
+        downloads: 1,
+        collaboration_access: 1,
+        email_support: "basic",
+        updates_new_docs: true,
+        call_support: false,
+        history_control: false,
+        version_control: false,
+      },
+    },
+    {
+      name: "Quarterly",
+      id: "plan_Q6DNQfQF1aTp6s",
+      prices: {
+        inr: 2999,
       },
       interval: {
         value: 3,
         frequency: "months",
       },
-      credits: {
-        download: 150,
+
+      features: {
+        documents: -1,
+        downloads: 60,
+        collaboration_access: -1,
+        email_support: "priority",
+        updates_new_docs: true,
+        call_support: false,
+        history_control: false,
+        version_control: false,
+      },
+    },
+    {
+      name: "Half Yearly",
+      id: "plan_Q6DKyyEGep4N3x",
+      prices: {
+        inr: 4999,
+      },
+      interval: {
+        value: 6,
+        frequency: "months",
+      },
+      features: {
+        documents: -1,
+        downloads: 150,
+        collaboration_access: -1,
+        email_support: "priority",
+        updates_new_docs: true,
+        call_support: true,
+        history_control: true,
+        version_control: true,
+      },
+      bestValue: true,
+    },
+    {
+      name: "Yearly",
+      id: "plan_Q6DNQfQF1aTp6s",
+      prices: {
+        inr: 9999,
+      },
+      interval: {
+        value: 1,
+        frequency: "year",
+      },
+      features: {
+        documents: -1,
+        downloads: 400,
+        collaboration_access: -1,
+        email_support: "priority",
+        updates_new_docs: true,
+        call_support: true,
+        history_control: true,
+        version_control: true,
       },
     },
   ],

@@ -68,4 +68,4 @@ export const getDashboardData = action(async () => {
           : "-",
     },
   };
-};)
+});

@@ -48,6 +48,8 @@ export default function DocPage({
       await getSingleDocument({ id: documentId, template: templateId }),
   });
 
+  const { data: activeOrg, isPending } = authClient.useActiveOrganization();
+
   const router = useRouter();
   const data = result?.data;
   const sess = authClient.useSession();
@@ -65,6 +67,11 @@ export default function DocPage({
     if (!sess.data?.session.activeOrganizationId) {
       return router.push("/org");
     }
+
+    if ((activeOrg?.metadata?.credits?.download || 0) === 0) {
+      return router.push("/upgrade");
+    }
+
     const el = document.getElementsByClassName("-tiptap-editor")[0];
     const thumbnail = await captureScreenshot(el as any);
 
@@ -88,7 +95,10 @@ export default function DocPage({
         });
       }
       if (!shouldDownload) return;
-      await createPDF(val || "").then((d) => {
+      await createPDF(val || "").then((res) => {
+        if (res.error) {
+        }
+        const d = res.data;
         const byteCharacters = atob(d);
         const byteNumbers = new Array(byteCharacters.length)
           .fill(null)
@@ -108,9 +118,11 @@ export default function DocPage({
     };
 
     toast.promise(exec, {
-      loading: "Saving Document",
-      success: "Succesfully saved document",
-      error: (e) => e.message || "Failed to save document",
+      loading: `${shouldDownload ? "Downloading" : "Saving"} Document`,
+      success: `Successfully ${shouldDownload ? "download" : "save"} document`,
+      error: (e) =>
+        e.message ||
+        `Failed to ${shouldDownload ? "download" : "save"} document`,
     });
   };
 
@@ -205,7 +217,7 @@ export default function DocPage({
         className="col-span-2 border-r h-screen overflow-y-auto relative flex flex-col flex-1"
         id="info-form"
       >
-        {isLoading ? (
+        {isLoading || isPending ? (
           <div className="flex-1 p-8 flex flex-col gap-5">
             <Skeleton className="h-10" />
             <Skeleton className="flex-1" />

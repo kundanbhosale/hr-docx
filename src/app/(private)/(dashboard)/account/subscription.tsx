@@ -1,13 +1,9 @@
 "use client";
 
 import React from "react";
-// import {
-//   getCustomerPortalStripe,
-//   getSubscription,
-// } from "@/features/stripe/server.actions";
+
 import { format } from "date-fns";
 import { ExternalLink } from "lucide-react";
-
 import { formatAmount } from "@/lib/intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

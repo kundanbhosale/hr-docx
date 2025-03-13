@@ -8,6 +8,7 @@ const Page = async () => {
   if (data.error) {
     throw data.error;
   }
+
   return <PageClient {...data.data} />;
 };
 
