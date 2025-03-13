@@ -153,13 +153,18 @@ export default function Page({}) {
             </div>
             <div>
               <Link
-                href={"/checkout?plan_id=" + p?.id}
-                className={cn(buttonVariants({ variant: "default" }), "w-full")}
+                href={p?.id === "ppd" ? "" : "/checkout?plan_id=" + p?.id}
+                className={cn(
+                  buttonVariants({ variant: "default" }),
+                  "w-full",
+                  p?.id === "ppd" && "bg-primary/60 pointer-events-none"
+                )}
               >
                 {p?.id === "ppd" ? (
                   <>
                     <Download />
-                    <span>Pay & Download</span>
+                    {/* <span>Pay & Download</span> */}
+                    <span>Coming Soon...</span>
                   </>
                 ) : (
                   "Subscribe to " + p?.name
