@@ -42,9 +42,9 @@ export const getDashboardData = action(async () => {
   ]);
   let sub: Subscriptions.RazorpaySubscription | null = null;
   if (org.metadata?.subscription?.id) {
-    sub = (await razorpay.subscriptions.fetch(
-      org.metadata?.subscription?.id
-    )) as Subscriptions.RazorpaySubscription;
+    sub = (await razorpay.subscriptions
+      .fetch(org.metadata?.subscription?.id)
+      .catch((e) => null)) as Subscriptions.RazorpaySubscription;
   }
 
   const plan = appConfig.plans.find(
@@ -57,7 +57,7 @@ export const getDashboardData = action(async () => {
     sub: {
       plan: org.metadata?.subscription?.plan || "Free",
       plan_id: org.metadata.subscription?.plan_id,
-      total: plan?.credits?.download || 0,
+      total: plan?.features?.downloads || 0,
       credits: org?.metadata?.credits || 0,
       period:
         sub?.current_start && sub?.current_end
