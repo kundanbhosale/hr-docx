@@ -12,8 +12,7 @@ import Loading from "@/components/common/loading";
 import { TemplateFormSchema } from "@/features/templates/schema";
 
 export function DocumentForm() {
-  const { formState, setFormValue, progress, nodeFocused, update } =
-    useDocumentStore();
+  const { formState, setFormValue, progress, update } = useDocumentStore();
   const [loading, setLoading] = useState(true);
   const onSubmit = (vals) => {
     console.log(vals);

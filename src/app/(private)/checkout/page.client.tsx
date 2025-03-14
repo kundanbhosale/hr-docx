@@ -1,21 +1,15 @@
 "use client";
-import { Session, User } from "better-auth";
 import React, { useEffect } from "react";
-
 import { env } from "@/app/env";
-
 import Script from "next/script";
-import { Subscriptions } from "razorpay/dist/types/subscriptions";
+import { AwaitedReturn } from "@/lib/types";
+import { createCheckout } from "@/features/payments/server.actions";
+import Loading from "@/components/common/loading";
 
-export const PageClient = ({
-  sub,
-  user,
-  session,
-}: {
-  sub: Subscriptions.RazorpaySubscription;
-  session: Session;
-  user: User;
-}) => {
+export const PageClient = (
+  props: AwaitedReturn<typeof createCheckout>["data"]
+) => {
+  const { sub, user, session, order, plan } = props || {};
   const processPayment = async () => {
     const params = new URLSearchParams(window.location.search);
     params.set("success", "true");
@@ -26,11 +20,14 @@ export const PageClient = ({
         name: user?.name,
         email: user?.email,
       },
-      subscription_id: sub.id,
+      subscription_id: sub?.id || undefined,
+      order_id: order?.id || undefined,
       callback_url: window.location.origin + "/checkout?" + params.toString(),
       notes: {
+        plan: plan?.name,
+        plan_id: plan?.id,
         user_id: user?.id,
-        org_id: (session as any).activeOrganizationId!,
+        org_id: session?.activeOrganizationId,
       },
     };
 
@@ -46,11 +43,12 @@ export const PageClient = ({
   }, []);
 
   return (
-    <div>
+    <div className="flex h-screen justify-center items-center">
       <Script
         id="razorpay-checkout-js"
         src="https://checkout.razorpay.com/v1/checkout.js"
       />
+      <Loading />
     </div>
   );
 };

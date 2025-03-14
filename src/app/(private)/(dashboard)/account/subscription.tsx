@@ -65,7 +65,7 @@ export default function SubscriptionInfo({
             <div className="grid grid-cols-[250px,auto] gap-4">
               <p className="text-muted-foreground">Plan</p>
               <p className="flex flex-wrap gap-2">
-                <Badge variant="outline">{plan?.name || "Unknown Plan"}</Badge>
+                <Badge variant="outline">{plan?.name || "Free Plan"}</Badge>
               </p>
               <p className="text-muted-foreground">Current Period</p>
               <p>

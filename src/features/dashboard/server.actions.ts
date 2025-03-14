@@ -40,25 +40,23 @@ export const getDashboardData = action(async () => {
       .selectAll()
       .executeTakeFirstOrThrow(),
   ]);
-  let plan: (typeof appConfig.plans)[0] | null = null;
   let sub: Subscriptions.RazorpaySubscription | null = null;
   if (org.metadata?.subscription?.id) {
     sub = (await razorpay.subscriptions.fetch(
       org.metadata?.subscription?.id
     )) as Subscriptions.RazorpaySubscription;
-    if (sub) {
-      plan = appConfig.plans.find(
-        (p) => p.id === sub?.plan_id
-      ) as (typeof appConfig.plans)[0];
-    }
   }
+
+  const plan = appConfig.plans.find(
+    (p) => p.id === org.metadata?.subscription?.plan_id
+  );
 
   return {
     documents,
     counts,
     sub: {
-      plan: plan?.name || "Free",
-      total: plan?.credits.download || 0,
+      plan: org.metadata?.subscription?.plan || "Free",
+      total: plan?.credits?.download || 0,
       credits: org?.metadata?.credits || 0,
       period:
         sub?.current_start && sub?.current_end

@@ -7,11 +7,19 @@ export const createCheckoutSchema = z
     success: z.coerce.boolean().default(false), // Coerce values to boolean
 
     sub_id: z.string().optional(),
+    order_id: z.string().optional(),
+
     cb_url: z.string().optional(),
   })
-  .refine((data) => data.plan_id !== undefined || data.sub_id !== undefined, {
-    message: "At least plan_id or sub_id field is required",
-  });
+  .refine(
+    (data) =>
+      data.plan_id !== undefined ||
+      data.sub_id !== undefined ||
+      data.order_id !== undefined,
+    {
+      message: "At least plan, subscription or order ID is required!",
+    }
+  );
 
 export const getSubscriptionSchema = z.object({ id: z.string() });
 export type GetSubscriptionSchema = z.infer<typeof getSubscriptionSchema>;

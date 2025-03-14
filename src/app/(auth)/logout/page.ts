@@ -4,7 +4,7 @@ import { redirect, RedirectType } from "next/navigation";
 
 const Page = async () => {
   await auth.api.signOut({ headers: await headers() });
-  return redirect("/", RedirectType.replace);
+  return redirect("/login", RedirectType.replace);
 };
 
 export default Page;

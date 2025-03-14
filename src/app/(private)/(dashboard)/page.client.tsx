@@ -84,14 +84,16 @@ const PageClient = (
               <Label>Period</Label>
               <p>{sub?.period}</p>
             </div>
-            <div className="pt-5">
-              <Link
-                href={"/"}
-                className={cn(buttonVariants({ size: "lg" }), "w-full")}
-              >
-                Upgrade Plan
-              </Link>
-            </div>
+            {sub?.plan === "Free" && (
+              <div className="pt-5">
+                <Link
+                  href={"/upgrade"}
+                  className={cn(buttonVariants({ size: "lg" }), "w-full")}
+                >
+                  Upgrade Plan
+                </Link>
+              </div>
+            )}
           </div>
           <div className="text-primary space-y-4 flex-1 flex flex-col justify-between max-h-[350px]">
             <div className="space-y-2">
@@ -102,7 +104,10 @@ const PageClient = (
                 unlimited documents with exciting editing features.
               </p>
             </div>
-            <Link href={"/"} className="flex gap-2 items-center text-base">
+            <Link
+              href={"/upgrade?view=all_plans"}
+              className="flex gap-2 items-center text-base"
+            >
               <ArrowRight /> Explore All Payment Plans
             </Link>
             <Image

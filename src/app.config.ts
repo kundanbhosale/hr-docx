@@ -31,7 +31,7 @@ export const appConfig = {
     },
     {
       name: "Quarterly",
-      id: env.IN_PROD ? "plan_Q6DNQfQF1aTp6s" : "plan_Q6DNQfQF1aTp6s",
+      id: env.IN_PROD ? "plan_Q6DNQfQF1aTp6s" : "plan_PxUR9JHBuaKCOM",
       prices: {
         inr: 2999,
       },
@@ -53,7 +53,7 @@ export const appConfig = {
     },
     {
       name: "Half Yearly",
-      id: env.IN_PROD ? "plan_Q6DKyyEGep4N3x" : "plan_Q6DKyyEGep4N3x",
+      id: env.IN_PROD ? "plan_Q6DKyyEGep4N3x" : "plan_PxUR9JHBuaKCOM",
       prices: {
         inr: 4999,
       },

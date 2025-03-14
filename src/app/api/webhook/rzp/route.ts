@@ -18,7 +18,8 @@ const relevantEvents = new Set([
   "subscription.completed",
 ]);
 
-const manageSubscriptionStatusChange = async (
+export const manageSubscriptionStatusChange = async (
+  event: string,
   subscription: Subscriptions.RazorpaySubscription
 ) => {
   console.log("Updating subscription...");
@@ -30,24 +31,53 @@ const manageSubscriptionStatusChange = async (
     .where("orgs.list.id", "=", subscription.notes.org_id)
     .set({
       metadata: {
-        subscription: {
-          id: subscription.id,
-          status: subscription.status,
-          current_start:
-            (subscription.current_start &&
-              Number(subscription.current_start * 1000)) ||
-            0,
-          current_end:
-            (subscription.current_end &&
-              Number(subscription.current_end * 1000)) ||
-            0,
-          plan: subscription.plan_id,
-        },
-        credits: plan.credits,
+        subscription:
+          event === "subscription.cancelled"
+            ? null
+            : {
+                id: subscription.id,
+                status: subscription.status,
+                current_start:
+                  (subscription.current_start &&
+                    Number(subscription.current_start * 1000)) ||
+                  0,
+                current_end:
+                  (subscription.current_end &&
+                    Number(subscription.current_end * 1000)) ||
+                  0,
+
+                plan_id: subscription.plan_id,
+                plan: subscription.notes.org_id,
+              },
+        credits: { download: plan.features.downloads },
       },
     })
     .execute();
   console.log("Updated subscription...");
+};
+
+export const manageOrderPaid = async (order: Orders.RazorpaySubscription) => {
+  console.log("Processing Order paid...");
+  if (!order.notes.org_id) return console.log("Skipping order paid not org-id");
+  const org = await db
+    .selectFrom("orgs.list")
+    .where("orgs.list.id", "=", order.notes.org_id)
+    .selectAll()
+    .executeTakeFirstOrThrow();
+  await db
+    .updateTable("orgs.list")
+    .where("orgs.list.id", "=", order.notes.org_id)
+    .set({
+      metadata: {
+        subscription: {
+          plan: order.notes.plan_name,
+          plan_id: order.notes.plan_id,
+        },
+        credits: { download: (Number(org.metadata.credits) || 0) + 1 },
+      },
+    })
+    .execute();
+  console.log("Success order paid...");
 };
 
 export async function POST(req: Request) {
@@ -77,12 +107,14 @@ export async function POST(req: Request) {
   if (relevantEvents.has(event)) {
     try {
       switch (event) {
-        // case "order.paid":
-
+        case "order.paid":
+          await manageOrderPaid(payload.order.entity as never);
+          break;
         case "subscription.charged":
         case "subscription.updated":
         case "subscription.cancelled":
           await manageSubscriptionStatusChange(
+            event,
             payload.subscription.entity as Subscriptions.RazorpaySubscription
           );
           break;

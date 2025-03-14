@@ -14,6 +14,7 @@ export default function UpgradePage({}) {
   const params = useSearchParams();
 
   const view = (params.get("view") as "all_plans") || undefined;
+  const cb = (params.get("cb") as string) || undefined;
 
   const bestValuePlan = appConfig.plans.find((b) => b.bestValue);
   const ppdPlan = appConfig.plans.find((b) => b.id === "ppd");
@@ -79,7 +80,7 @@ export default function UpgradePage({}) {
   });
 
   return (
-    <Modal className="max-w-screen-xl m-auto w-full bg-transparent border-none shadow-none overflow-y-scroll">
+    <Modal className="max-w-screen-xl m-auto w-max border-none shadow-none overflow-y-auto">
       <div className="flex flex-wrap gap-2 justify-center">
         {view !== "all_plans" && (
           <div className="bg-background text-primary max-w-[350px] w-full border rounded-lg p-8 space-y-8 flex flex-col justify-between border-secondary">
@@ -91,7 +92,10 @@ export default function UpgradePage({}) {
               </h1>
               <p>{currBanner.desc}</p>
             </div>
-            <Link href={"/"} className="flex gap-2 items-center text-base">
+            <Link
+              href={"/upgrade?view=all_plans"}
+              className="flex gap-2 items-center text-base"
+            >
               <ArrowRight /> Explore All Payment Plans
             </Link>
             <Image
@@ -153,18 +157,15 @@ export default function UpgradePage({}) {
             </div>
             <div>
               <Link
-                href={p?.id === "ppd" ? "" : "/checkout?plan_id=" + p?.id}
-                className={cn(
-                  buttonVariants({ variant: "default" }),
-                  "w-full",
-                  p?.id === "ppd" && "bg-primary/60 pointer-events-none"
-                )}
+                href={
+                  "/checkout?plan_id=" + p?.id + ((cb && "&cb_url=" + cb) || "")
+                }
+                className={cn(buttonVariants({ variant: "default" }), "w-full")}
               >
                 {p?.id === "ppd" ? (
                   <>
                     <Download />
-                    {/* <span>Pay & Download</span> */}
-                    <span>Coming Soon...</span>
+                    <span>Pay & Download</span>
                   </>
                 ) : (
                   "Subscribe to " + p?.name

@@ -19,6 +19,7 @@ import { authClient } from "@/features/auth/client";
 import Image from "next/image";
 import { format } from "date-fns";
 import Team from "./team";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CompanyLayout() {
   const [view, setView] = useQueryState(
@@ -112,13 +113,19 @@ export default function CompanyLayout() {
               </div>
             )}
             <div className="border-l pl-8">
-              {view === "general" ? (
-                <General />
-              ) : view === "team" ? (
-                <Team />
-              ) : view === "subscription" ? (
-                <SubscriptionInfo session={data?.session} />
-              ) : null}
+              {isPending ? (
+                <Skeleton className="h-full w-full" />
+              ) : (
+                <>
+                  {view === "general" ? (
+                    <General />
+                  ) : view === "team" ? (
+                    <Team />
+                  ) : view === "subscription" ? (
+                    <SubscriptionInfo session={data?.session} />
+                  ) : null}
+                </>
+              )}
             </div>
           </div>
         </div>

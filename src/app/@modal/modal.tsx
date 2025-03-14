@@ -12,9 +12,11 @@ export const Modal = ({
   className?: string;
 }) => {
   const router = useRouter();
+
   const handleOpenChange = () => {
     router.back();
   };
+
   return (
     <Dialog defaultOpen={true} open={true} onOpenChange={handleOpenChange}>
       <DialogOverlay>

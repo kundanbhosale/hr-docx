@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { captureScreenshot } from "@/lib/screenshot";
 import { authClient } from "@/features/auth/client";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function DocPage({
   documentId,
@@ -37,13 +37,15 @@ export default function DocPage({
     inputFocused,
     title,
     nodeFocused,
+    id: stateDocId,
+    template: stateTemplate,
   } = useDocumentStore();
   const {
     data: result,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["document", documentId],
+    queryKey: ["document", { documentId, templateId }],
     queryFn: async () =>
       await getSingleDocument({ id: documentId, template: templateId }),
   });
@@ -57,7 +59,6 @@ export default function DocPage({
   const [downloads, setDownloads] = React.useState(0);
   const [pending, startTransition] = React.useTransition();
   const [key, setKey] = useState(0);
-
   const saveFn = async (shouldDownload?: boolean) => {
     if (!sess.data?.session)
       return router.push(
@@ -69,7 +70,9 @@ export default function DocPage({
     }
 
     if ((activeOrg?.metadata?.credits?.download || 0) === 0) {
-      return router.push("/upgrade");
+      return router.push(
+        "/upgrade?cb=" + window.location.pathname + window.location.search
+      );
     }
 
     const el = document.getElementsByClassName("-tiptap-editor")[0];
@@ -139,7 +142,17 @@ export default function DocPage({
   };
 
   useEffect(() => {
-    if (!data) return;
+    if (!data || (stateDocId == data.id && data.template == stateTemplate))
+      return;
+    console.log(
+      !data,
+      stateDocId == data.id && data.template == stateTemplate,
+      data,
+      stateDocId,
+      data.id,
+      data.template,
+      stateTemplate
+    );
     reset(data);
     if (data?.schema.length === 0) {
       update({ progress: 100 });
@@ -147,7 +160,7 @@ export default function DocPage({
     setKey(new Date().getTime());
 
     return () => reset(data);
-  }, [data]);
+  }, [data, templateId, documentId]);
 
   const focusedClass = ["node-focused"];
 
@@ -187,7 +200,6 @@ export default function DocPage({
   useEffect(() => {
     const onHashChanged = () => {
       const hash = nodeFocused;
-      console.log(hash);
       if (!hash) return;
       const container = document.getElementById("editor-container");
       const el = Array.from(document.querySelectorAll(`[data-id="${hash}"]`));

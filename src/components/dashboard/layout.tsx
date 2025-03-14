@@ -51,6 +51,7 @@ export const DashboardLayout = ({
       >
         <motion.div>
           <Image
+            key={String(open)}
             src={!open ? appConfig.logo.icon : appConfig.logo.logoWhite}
             alt={appConfig.title.short}
             width={!open ? 40 : 200}
