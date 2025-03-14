@@ -85,8 +85,8 @@ export const manageOrderPaid = async (
     .values({
       id: randomUUID(),
       ref: order.id,
-      org: order.notes.org_id!,
-      created_by: order.notes.user_id,
+      org: notes.org_id!,
+      created_by: notes.user_id,
       metadata: order as any,
       updated_at: sql`now()`,
     })
