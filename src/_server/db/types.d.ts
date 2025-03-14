@@ -141,6 +141,17 @@ export interface OrgsMember {
   userId: string;
 }
 
+export interface OrgsOrders {
+  created_at: Generated<Timestamp | null>;
+  created_by: string;
+  deleted_at: Timestamp | null;
+  id: string;
+  metadata: Json | null;
+  org: string;
+  ref: string;
+  updated_at: Timestamp | null;
+}
+
 export interface Templates {
   content: string;
   created_at: Generated<Timestamp | null>;
@@ -170,5 +181,6 @@ export interface DB {
   "orgs.invitation": OrgsInvitation;
   "orgs.list": OrgsList;
   "orgs.member": OrgsMember;
+  "orgs.orders": OrgsOrders;
   templates: Templates;
 }

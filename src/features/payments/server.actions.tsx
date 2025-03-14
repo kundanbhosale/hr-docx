@@ -11,6 +11,7 @@ import {
   manageOrderPaid,
   manageSubscriptionStatusChange,
 } from "@/app/api/webhook/rzp/route";
+import { revalidatePath } from "next/cache";
 
 export async function longPolling(cb: () => Promise<boolean>) {
   let attempts = 0;
@@ -194,8 +195,28 @@ export const getSubscriptionAndPayments = action(async () => {
   const plan = appConfig.plans.find(
     (p) => p.id === org.metadata.subscription?.plan_id
   );
+
+  const orders = await db
+    .selectFrom("orgs.orders")
+    .selectAll()
+    .where("org", "=", session.session.activeOrganizationId!)
+    .orderBy("created_at desc")
+    .execute()
+    .then((r) =>
+      r.map((t) => {
+        const order = t.metadata as unknown as Orders.RazorpayOrder;
+        return {
+          id: t.id,
+          status: order.status,
+          amount: order.amount,
+          created: order.created_at,
+        };
+      })
+    );
+
   return {
     plan,
+    orders,
     sub: sub
       ? {
           id: sub.id,
@@ -205,3 +226,32 @@ export const getSubscriptionAndPayments = action(async () => {
       : null,
   };
 });
+
+export const cancelSubscription = async () => {
+  const session = await hasPermission({
+    permission: {
+      subscription: ["delete"],
+    },
+  });
+
+  const org = await db
+    .selectFrom("orgs.list")
+    .where("id", "=", session.session.activeOrganizationId!)
+    .selectAll()
+    .executeTakeFirstOrThrow();
+
+  if (!org.metadata?.subscription?.id) {
+    throw new ClientError("No active subscription");
+  }
+
+  await razorpay.subscriptions
+    .cancel(org.metadata?.subscription?.id, false)
+    .catch((c) => {
+      console.log(c);
+      throw new ClientError("Failed to cancel subscription");
+    });
+
+  revalidatePath("/account", "layout");
+
+  return true;
+};

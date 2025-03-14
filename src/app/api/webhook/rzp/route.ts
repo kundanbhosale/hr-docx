@@ -3,15 +3,11 @@ import { db } from "@/_server/db";
 import { appConfig } from "@/app.config";
 import { env } from "@/app/env";
 import { ClientError } from "@/lib/error";
+import { randomUUID } from "crypto";
+import { sql } from "kysely";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 
 const relevantEvents = new Set([
-  // "product.created",
-  // "product.updated",
-  // "product.deleted",
-  // "price.created",
-  // "price.updated",
-  // "price.deleted",
   "order.paid",
   "subscription.charged",
   "subscription.updated",
@@ -57,26 +53,49 @@ export const manageSubscriptionStatusChange = async (
   console.log("Updated subscription...");
 };
 
-export const manageOrderPaid = async (order: Orders.RazorpaySubscription) => {
+export const manageOrderPaid = async (
+  order: Orders.RazorpayOrder,
+  payment: Payments.RazorpayPayment
+) => {
   console.log("Processing Order paid...");
-  if (!order.notes.org_id) return console.log("Skipping order paid not org-id");
+  const notes = payment.notes;
+
+  if (!notes.org_id) return console.log("Skipping order paid no org-id");
   const org = await db
     .selectFrom("orgs.list")
-    .where("orgs.list.id", "=", order.notes.org_id)
+    .where("orgs.list.id", "=", notes.org_id)
     .selectAll()
     .executeTakeFirstOrThrow();
   await db
     .updateTable("orgs.list")
-    .where("orgs.list.id", "=", order.notes.org_id)
+    .where("orgs.list.id", "=", notes.org_id)
     .set({
       metadata: {
         subscription: {
-          plan: order.notes.plan_name,
-          plan_id: order.notes.plan_id,
+          plan: notes.plan_name,
+          plan_id: notes.plan_id,
         },
         credits: { download: (Number(org.metadata.credits) || 0) + 1 },
       },
     })
+    .execute();
+
+  await db
+    .insertInto("orgs.orders")
+    .values({
+      id: randomUUID(),
+      ref: order.id,
+      org: order.notes.org_id!,
+      created_by: order.notes.user_id,
+      metadata: order as any,
+      updated_at: sql`now()`,
+    })
+    .onConflict((oc) =>
+      oc.column("ref").doUpdateSet({
+        metadata: (eb) => eb.ref("excluded.metadata"),
+        updated_at: (eb) => eb.ref("excluded.updated_at"),
+      })
+    )
     .execute();
   console.log("Success order paid...");
 };
@@ -109,7 +128,10 @@ export async function POST(req: Request) {
     try {
       switch (event) {
         case "order.paid":
-          await manageOrderPaid(payload.order.entity as never);
+          await manageOrderPaid(
+            payload.order.entity as never,
+            payload.payment.entity
+          );
           break;
         case "subscription.charged":
         case "subscription.updated":

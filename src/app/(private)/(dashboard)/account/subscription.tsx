@@ -1,12 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useTransition } from "react";
 
 import { format } from "date-fns";
-import { ExternalLink } from "lucide-react";
 import { formatAmount } from "@/lib/intl";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -19,8 +18,14 @@ import {
 import EmptyPage from "@/components/pages/empty";
 import { AuthSessions } from "@/_server/db/types";
 import { useQuery } from "@tanstack/react-query";
-import { getSubscriptionAndPayments } from "@/features/payments/server.actions";
+import {
+  cancelSubscription,
+  getSubscriptionAndPayments,
+} from "@/features/payments/server.actions";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function SubscriptionInfo({
   session,
@@ -32,10 +37,20 @@ export default function SubscriptionInfo({
     queryFn: () => getSubscriptionAndPayments(),
     enabled: !!session?.activeOrganizationId,
   });
+  const [pending, startTran] = useTransition();
+  const handleCancel = () => {
+    startTran(() => {
+      toast.promise(cancelSubscription, {
+        success: "Canncelled current subscription",
+        error: "Failed to cancel subscription",
+        loading: "Cancelling subscription",
+      });
+    });
+  };
 
   const sub = data?.data?.sub;
   const plan = data?.data?.plan;
-  const invoices = null;
+  const orders = data?.data?.orders;
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -53,10 +68,21 @@ export default function SubscriptionInfo({
         <CardHeader className="grid grid-cols-[auto,200px]">
           <CardTitle>Current Subscription</CardTitle>
           <div className="relative flex justify-end">
-            <div className="absolute -bottom-5 right-0 flex gap-4">
-              <Button size={"sm"} disabled={true}>
-                Upgrade Plan
-              </Button>
+            <div className="absolute -bottom-5 right-0 flex gap-4 ">
+              {!plan?.id && (
+                <Link
+                  href={"/upgrade"}
+                  className={cn(buttonVariants({ size: "sm" }))}
+                >
+                  Upgrade Plan
+                </Link>
+              )}
+
+              {sub?.id && (
+                <Button size={"sm"} variant={"outline"} onClick={handleCancel}>
+                  Cancel Subscription
+                </Button>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -95,28 +121,29 @@ export default function SubscriptionInfo({
             <TableHeader>
               <TableRow>
                 <TableHead className="">Invoice</TableHead>
-                <TableHead></TableHead>
+                <TableHead className="">Status</TableHead>
+
                 <TableHead className="">Date</TableHead>
                 <TableHead className="">Amount</TableHead>
-                <TableHead className=""></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {invoices && invoices?.length > 0 ? (
-                invoices?.map((d, i) => (
+              {orders && orders?.length > 0 ? (
+                orders?.map((d, i) => (
                   <TableRow key={i}>
-                    <TableCell className="py-4">{d.number}</TableCell>
-
-                    <TableCell>{d.lines.data[0].description}</TableCell>
+                    <TableCell className="py-4">{d.id}</TableCell>
+                    <TableCell>
+                      <Badge>{d.status}</Badge>
+                    </TableCell>
                     <TableCell>
                       {format(new Date(d.created * 1000), "PP")}
                     </TableCell>
                     <TableCell>
-                      {formatAmount(d.currency, Number(d.total / 100) || 0, {
+                      {formatAmount("INR", Number(d.amount) || 0, {
                         fractionDigits: 2,
                       })}
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <a
                         href={d.hosted_invoice_url || ""}
                         className="flex items-center gap-2"
@@ -127,7 +154,7 @@ export default function SubscriptionInfo({
                           strokeWidth={1.7}
                         />
                       </a>
-                    </TableCell>
+                    </TableCell> */}
                   </TableRow>
                 ))
               ) : (
