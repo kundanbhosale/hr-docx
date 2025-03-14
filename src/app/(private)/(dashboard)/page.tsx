@@ -7,7 +7,7 @@ import { ClientError } from "@/lib/error";
 const Page = async () => {
   const data = await getDashboardData();
   if (data.error) {
-    throw new ClientError(data.error);
+    throw data.error;
   }
 
   return <PageClient {...data.data} />;

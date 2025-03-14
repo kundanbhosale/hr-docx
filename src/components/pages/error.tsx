@@ -14,12 +14,14 @@ export default function ErrorPage({
   title,
   icon,
   reset,
+  noReset,
 }: {
   error?: Error & { digest?: string };
   message?: string;
   title?: string;
   icon?: LucideIcon;
   reset?: () => void;
+  noReset?: boolean;
 }) {
   const router = useRouter();
   const Ico = icon || XCircle;
@@ -43,12 +45,14 @@ export default function ErrorPage({
             <Button variant={"outline"} onClick={() => router.back()}>
               <ArrowLeft /> <span> Go Back</span>
             </Button>
-            <Button
-              variant={"outline"}
-              onClick={() => (reset ? reset() : router.refresh())}
-            >
-              <RotateCcw /> Try Again
-            </Button>
+            {!noReset && (
+              <Button
+                variant={"outline"}
+                onClick={() => (reset ? reset() : router.refresh())}
+              >
+                <RotateCcw /> Try Again
+              </Button>
+            )}
           </div>
         </div>
       </div>

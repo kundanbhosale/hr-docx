@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { ZodError } from "zod";
 import { fromError } from "zod-validation-error";
 
@@ -20,11 +21,16 @@ export function action<T extends any[], U>(
 
       if (err instanceof ZodError) {
         const validationError = fromError(err);
-        return { error: validationError.toString() };
+        return redirect(
+          "/error?state=" +
+            btoa(JSON.stringify({ message: validationError.toString() }))
+        );
       }
 
       if (err instanceof ClientError) {
-        return { error: err.message };
+        return redirect(
+          "/error?state=" + btoa(JSON.stringify({ message: err.message }))
+        );
       }
 
       console.log("Throwing error!");

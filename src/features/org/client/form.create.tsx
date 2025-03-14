@@ -56,7 +56,7 @@ const CreateOrgForm = ({ onSubmit }: { onSubmit: () => void }) => {
         loading: "Creating Organization...",
         success: async (data) => {
           if (data.error) {
-            throw new ClientError(data.error);
+            throw data.error;
           }
           await authClient.organization
             .setActive({ organizationSlug: data.data?.slug })
