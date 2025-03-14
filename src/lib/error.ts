@@ -33,7 +33,7 @@ export function action<T extends any[], U>(
         );
       }
 
-      console.log("Throwing error!");
+      console.log("Throwing error!", err);
       throw err;
     }
   };
