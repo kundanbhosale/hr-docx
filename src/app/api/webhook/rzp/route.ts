@@ -48,7 +48,7 @@ export const manageSubscriptionStatusChange = async (
                   0,
 
                 plan_id: subscription.plan_id,
-                plan: subscription.notes.org_id,
+                plan: subscription.notes.plan_name,
               },
         credits: { download: plan.features.downloads },
       },

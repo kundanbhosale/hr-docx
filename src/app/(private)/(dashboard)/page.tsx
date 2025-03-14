@@ -2,7 +2,6 @@ import React from "react";
 import PageClient from "./page.client";
 
 import { getDashboardData } from "@/features/dashboard/server.actions";
-import { ClientError } from "@/lib/error";
 
 const Page = async () => {
   const data = await getDashboardData();
