@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, LucideIcon, RotateCcw, XCircle } from "lucide-react";
 
@@ -15,6 +15,7 @@ export default function ErrorPage({
   icon,
   reset,
   noReset,
+  actionBtn,
 }: {
   error?: Error & { digest?: string };
   message?: string;
@@ -22,6 +23,7 @@ export default function ErrorPage({
   icon?: LucideIcon;
   reset?: () => void;
   noReset?: boolean;
+  actionBtn?: ReactNode;
 }) {
   const router = useRouter();
   const Ico = icon || XCircle;
@@ -31,7 +33,7 @@ export default function ErrorPage({
         <div className="flex justify-center items-center mb-4">
           <Image src="/app/logo.png" width={150} height={44} alt="HR Docx" />
         </div>
-        <div className="flex flex-col p-4 py-10 items-center justify-center text-center border bg-background w-[500px]">
+        <div className="flex flex-col p-4 py-10 items-center justify-center text-center border bg-background w-full md:w-[500px]">
           <Ico className="mb-2 size-20 opacity-70" strokeWidth={1.1} />
           <p className="break-all text-xl font-medium">
             {title || "Oh no, Something went wrong!"}
@@ -42,9 +44,13 @@ export default function ErrorPage({
               "We don't know what caused this error!"}
           </Label>
           <div className="my-6 space-x-4">
-            <Button variant={"outline"} onClick={() => router.back()}>
-              <ArrowLeft /> <span> Go Back</span>
-            </Button>
+            {!actionBtn ? (
+              <Button variant={"outline"} onClick={() => router.back()}>
+                <ArrowLeft /> <span> Go Back</span>
+              </Button>
+            ) : (
+              actionBtn
+            )}
             {!noReset && (
               <Button
                 variant={"outline"}

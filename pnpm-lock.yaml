@@ -215,6 +215,9 @@ importers:
       lucide-react:
         specifier: ^0.471.1
         version: 0.471.1(react@18.3.1)
+      mobile-detect:
+        specifier: ^1.4.5
+        version: 1.4.5
       nanoid:
         specifier: ^5.1.3
         version: 5.1.3
@@ -4146,6 +4149,9 @@ packages:
 
   mlly@1.7.4:
     resolution: {integrity: sha512-qmdSIPC4bDJXgZTCR7XosJiNKySV7O215tsPtDN9iEO/7q/76b/ijtgRu/+epFXSJhijtTCCGp3DWS549P3xKw==}
+
+  mobile-detect@1.4.5:
+    resolution: {integrity: sha512-yc0LhH6tItlvfLBugVUEtgawwFU2sIe+cSdmRJJCTMZ5GEJyLxNyC/NIOAOGk67Fa8GNpOttO3Xz/1bHpXFD/g==}
 
   motion-dom@12.0.0:
     resolution: {integrity: sha512-CvYd15OeIR6kHgMdonCc1ihsaUG4MYh/wrkz8gZ3hBX/uamyZCXN9S9qJoYF03GqfTt7thTV/dxnHYX4+55vDg==}
@@ -9935,6 +9941,8 @@ snapshots:
       pathe: 2.0.3
       pkg-types: 1.3.1
       ufo: 1.5.4
+
+  mobile-detect@1.4.5: {}
 
   motion-dom@12.0.0:
     dependencies:
