@@ -2,6 +2,7 @@
 import { db } from "@/_server/db";
 import { appConfig } from "@/app.config";
 import { env } from "@/app/env";
+import { ClientError } from "@/lib/error";
 import { validateWebhookSignature } from "razorpay/dist/utils/razorpay-utils";
 
 const relevantEvents = new Set([
@@ -24,7 +25,7 @@ export const manageSubscriptionStatusChange = async (
 ) => {
   console.log("Updating subscription...");
   const plan = appConfig.plans.find((f) => f.id === subscription.plan_id);
-  if (!plan) throw Error("Plan not found");
+  if (!plan) throw new ClientError("Plan not found");
 
   await db
     .updateTable("orgs.list")
@@ -95,7 +96,7 @@ export async function POST(req: Request) {
       String(sig),
       webhookSecret
     );
-    if (!isValid) throw Error("Permission denied.");
+    if (!isValid) throw new ClientError("Permission denied.");
 
     console.log(`🔔  Webhook received: ${event}`);
   } catch (err: any) {
@@ -119,7 +120,7 @@ export async function POST(req: Request) {
           );
           break;
         default:
-          throw new Error("Unhandled relevant event!");
+          throw new ClientError("Unhandled relevant event!");
       }
     } catch (error) {
       console.log(error);

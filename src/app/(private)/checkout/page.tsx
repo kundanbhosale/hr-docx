@@ -2,7 +2,7 @@
 
 import { createCheckout } from "@/features/payments/server.actions";
 import { PageClient } from "./page.client";
-import ErrorPage from "@/components/pages/error";
+import { ClientError } from "@/lib/error";
 
 const Page = async (props: {
   searchParams: {
@@ -14,7 +14,7 @@ const Page = async (props: {
 }) => {
   const data = await createCheckout(props.searchParams);
   if (data.error) {
-    return <ErrorPage error={data.error} />;
+    throw new ClientError(data.error);
   }
 
   return <PageClient {...data.data} />;

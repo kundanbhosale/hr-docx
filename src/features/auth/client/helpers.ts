@@ -1,3 +1,4 @@
+import { ClientError } from "@/lib/error";
 import { authClient } from "../client";
 
 export const signIn = async (
@@ -17,7 +18,7 @@ export const signIn = async (
         })
         .then((r) => {
           if (r.data?.status === false) {
-            throw Error("Failed to send login link");
+            throw new ClientError("Failed to send login link");
           }
           return true;
         })
@@ -48,7 +49,7 @@ export const signIn = async (
         });
 
     default:
-      throw Error("Invalid signin action");
+      throw new ClientError("Invalid signin action");
   }
 };
 

@@ -1,7 +1,7 @@
 import { ZodError } from "zod";
+import { fromError } from "zod-validation-error";
 
 export class ClientError extends Error {}
-import { fromError } from "zod-validation-error";
 
 export function action<T extends any[], U>(
   fn: (...args: T) => Promise<U>
@@ -12,12 +12,22 @@ export function action<T extends any[], U>(
     try {
       return { data: await fn(...args) };
     } catch (err: unknown) {
+      console.log("Error typeof:", typeof err);
+      console.log(
+        "Error instance:",
+        err instanceof Error ? err.constructor.name : "Not an instance of Error"
+      );
+
       if (err instanceof ZodError) {
         const validationError = fromError(err);
         return { error: validationError.toString() };
       }
 
-      if (err instanceof ClientError) return { error: err.message };
+      if (err instanceof ClientError) {
+        return { error: err.message };
+      }
+
+      console.log("Throwing error!");
       throw err;
     }
   };

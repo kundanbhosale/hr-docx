@@ -4,7 +4,7 @@ import { db } from "@/_server/db";
 import { createCheckoutSchema, CreateCheckoutSchema } from "./schema";
 import { hasPermission } from "@/features/auth/server/actions";
 import { razorpay } from "@/features/payments/server.init";
-import { action } from "@/lib/error";
+import { action, ClientError } from "@/lib/error";
 import { redirect, RedirectType } from "next/navigation";
 import { appConfig } from "@/app.config";
 import {
@@ -104,18 +104,18 @@ export const createCheckout = action(async (data: CreateCheckoutSchema) => {
   const org = await getOrg();
 
   if (org.metadata.subscription?.status === "active") {
-    throw Error("Already subscribed");
+    throw new ClientError("Already subscribed");
   }
 
   result.plan = appConfig.plans.find((p) => p.id === plan_id) || null;
 
   params.set("plan_id", result.plan?.id);
 
-  if (!result.plan) throw Error("Plan not found");
+  if (!result.plan) throw new ClientError("Plan not found");
 
   if (order_id) {
     result.order = await razorpay.orders.fetch(order_id).catch((e) => {
-      throw Error("Failed to find order");
+      throw new ClientError("Failed to find order");
     });
 
     return result;
@@ -140,11 +140,11 @@ export const createCheckout = action(async (data: CreateCheckoutSchema) => {
 
   if (sub_id) {
     sub = await razorpay.subscriptions.fetch(sub_id).catch((err) => {
-      throw Error("Failed to find subscription", err);
+      throw new ClientError("Failed to find subscription", err);
     });
 
     if (!["created", "authenticated"].includes(sub.status)) {
-      throw Error("Invalid subscription");
+      throw new ClientError("Invalid subscription");
     }
   } else {
     if (plan_id) {
@@ -162,7 +162,7 @@ export const createCheckout = action(async (data: CreateCheckoutSchema) => {
         })
         .catch((err) => {
           console.log(err);
-          throw Error("Failed to create subscription", err);
+          throw new ClientError("Failed to create subscription", err);
         });
       params.set("sub_id", sub?.id);
 

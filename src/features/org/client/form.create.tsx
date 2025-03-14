@@ -24,6 +24,7 @@ import { z } from "zod";
 import slugify from "slugify";
 import { revalidatePath } from "next/cache";
 import { useRouter } from "next/navigation";
+import { ClientError } from "@/lib/error";
 
 const schema = z.object({
   name: z.string().min(2).max(200),
@@ -55,7 +56,7 @@ const CreateOrgForm = ({ onSubmit }: { onSubmit: () => void }) => {
         loading: "Creating Organization...",
         success: async (data) => {
           if (data.error) {
-            throw data.error;
+            throw new ClientError(data.error);
           }
           await authClient.organization
             .setActive({ organizationSlug: data.data?.slug })

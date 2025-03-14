@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/_server/db";
-import { action } from "@/lib/error";
+import { action, ClientError } from "@/lib/error";
 import {
   allDocumentsSchema,
   AllDocumentsSchema,
@@ -64,7 +64,7 @@ export const getSingleDocument = action(
       console.log(id);
       return document as Selectable<Documents>;
     } else {
-      if (!props.template) throw Error("No template provided");
+      if (!props.template) throw new ClientError("No template provided");
       return await generateDocument({ template: props.template });
     }
   }

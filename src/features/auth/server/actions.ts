@@ -4,7 +4,7 @@ import { auth } from "./init";
 import { cache } from "react";
 import { env } from "@/app/env";
 import { redirect } from "next/navigation";
-import { action } from "@/lib/error";
+import { ClientError } from "@/lib/error";
 
 export const getSession = cache(async () => {
   return await auth.api.getSession({
@@ -39,13 +39,13 @@ export const hasPermission = cache(
       if (env.STAFF_DOMAIN === "ignore") {
         return session;
       } else if (!env.STAFF_DOMAIN?.includes(domain))
-        throw Error("Permission denied!");
+        throw new ClientError("Permission denied!");
     } else {
       const result = await auth.api.hasPermission({
         headers: await headers(),
         body: body!,
       });
-      if (!result.success) throw Error("Permission denied!");
+      if (!result.success) throw new ClientError("Permission denied!");
     }
 
     return session;

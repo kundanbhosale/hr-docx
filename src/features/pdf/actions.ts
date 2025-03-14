@@ -6,7 +6,7 @@ import { getHost } from "@/lib/headers";
 import { hasPermission } from "../auth/server/actions";
 import { db } from "@/_server/db";
 import { sql } from "kysely";
-import { action } from "@/lib/error";
+import { action, ClientError } from "@/lib/error";
 
 async function getBrowser() {
   return puppeteer.launch({
@@ -35,7 +35,8 @@ export const createPDF = action(async (html: string) => {
     .selectAll()
     .executeTakeFirstOrThrow();
 
-  if (org.metadata.credits.download <= 0) throw Error("No credits left");
+  if (org.metadata.credits.download <= 0)
+    throw new ClientError("No credits left");
 
   const browser = await getBrowser();
   const page = await browser.newPage();
