@@ -46,7 +46,10 @@ export const manageSubscriptionStatusChange = async (
                 plan_id: subscription.plan_id,
                 plan: subscription.notes.plan_name,
               },
-        credits: { download: plan.features.downloads },
+        credits: {
+          download:
+            event === "subscription.cancelled" ? 0 : plan.features.downloads,
+        },
       },
     })
     .execute();
@@ -55,10 +58,10 @@ export const manageSubscriptionStatusChange = async (
 
 export const manageOrderPaid = async (
   order: Orders.RazorpayOrder,
-  payment: Payments.RazorpayPayment
+  payment?: Payments.RazorpayPayment
 ) => {
   console.log("Processing Order paid...");
-  const notes = payment.notes;
+  const notes = payment?.notes || order.notes;
 
   if (!notes.org_id) return console.log("Skipping order paid no org-id");
   const org = await db
@@ -66,12 +69,14 @@ export const manageOrderPaid = async (
     .where("orgs.list.id", "=", notes.org_id)
     .selectAll()
     .executeTakeFirstOrThrow();
+
   await db
     .updateTable("orgs.list")
     .where("orgs.list.id", "=", notes.org_id)
     .set({
       metadata: {
         subscription: {
+          id: null,
           plan: notes.plan_name,
           plan_id: notes.plan_id,
         },
@@ -86,7 +91,7 @@ export const manageOrderPaid = async (
       id: randomUUID(),
       ref: order.id,
       org: notes.org_id!,
-      created_by: notes.user_id,
+      created_by: notes.user,
       metadata: order as any,
       updated_at: sql`now()`,
     })

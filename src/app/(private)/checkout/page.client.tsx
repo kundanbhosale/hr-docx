@@ -24,9 +24,9 @@ export const PageClient = (
       order_id: order?.id || undefined,
       callback_url: window.location.origin + "/checkout?" + params.toString(),
       notes: {
-        plan: plan?.name,
+        plan_name: plan?.name,
         plan_id: plan?.id,
-        user_id: user?.id,
+        user: user?.id,
         org_id: session?.activeOrganizationId,
       },
     };

@@ -51,6 +51,7 @@ export default function SubscriptionInfo({
   const sub = data?.data?.sub;
   const plan = data?.data?.plan;
   const orders = data?.data?.orders;
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -69,7 +70,7 @@ export default function SubscriptionInfo({
           <CardTitle>Current Subscription</CardTitle>
           <div className="relative flex justify-end">
             <div className="absolute -bottom-5 right-0 flex gap-4 ">
-              {!plan?.id && (
+              {(!plan?.id || plan?.id === "ppd") && (
                 <Link
                   href={"/upgrade"}
                   className={cn(buttonVariants({ size: "sm" }))}
@@ -79,7 +80,12 @@ export default function SubscriptionInfo({
               )}
 
               {sub?.id && (
-                <Button size={"sm"} variant={"outline"} onClick={handleCancel}>
+                <Button
+                  disabled={pending}
+                  size={"sm"}
+                  variant={"outline"}
+                  onClick={handleCancel}
+                >
                   Cancel Subscription
                 </Button>
               )}
@@ -114,13 +120,13 @@ export default function SubscriptionInfo({
       </Card>
       <Card className="max-w-screen-lg">
         <CardHeader className="grid grid-cols-[auto,200px]">
-          <CardTitle>Subscription History</CardTitle>
+          <CardTitle>Order History</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="">Invoice</TableHead>
+                <TableHead className="">ID</TableHead>
                 <TableHead className="">Status</TableHead>
 
                 <TableHead className="">Date</TableHead>
@@ -133,7 +139,7 @@ export default function SubscriptionInfo({
                   <TableRow key={i}>
                     <TableCell className="py-4">{d.id}</TableCell>
                     <TableCell>
-                      <Badge>{d.status}</Badge>
+                      <Badge variant={"outline"}>{d.status}</Badge>
                     </TableCell>
                     <TableCell>
                       {format(new Date(d.created * 1000), "PP")}

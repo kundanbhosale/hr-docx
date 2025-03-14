@@ -192,6 +192,7 @@ export const getSubscriptionAndPayments = action(async () => {
   const sub = org.metadata.subscription?.id
     ? await razorpay.subscriptions.fetch(org.metadata.subscription.id)
     : null;
+
   const plan = appConfig.plans.find(
     (p) => p.id === org.metadata.subscription?.plan_id
   );
@@ -208,7 +209,7 @@ export const getSubscriptionAndPayments = action(async () => {
         return {
           id: t.id,
           status: order.status,
-          amount: order.amount,
+          amount: Number(order.amount) / 100,
           created: order.created_at,
         };
       })

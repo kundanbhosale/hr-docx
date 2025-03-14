@@ -56,6 +56,7 @@ export const getDashboardData = action(async () => {
     counts,
     sub: {
       plan: org.metadata?.subscription?.plan || "Free",
+      plan_id: org.metadata.subscription?.plan_id,
       total: plan?.credits?.download || 0,
       credits: org?.metadata?.credits || 0,
       period:

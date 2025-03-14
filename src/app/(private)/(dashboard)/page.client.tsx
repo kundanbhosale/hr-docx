@@ -25,7 +25,6 @@ const PageClient = (
 
   const documents = props?.documents;
   const sub = props?.sub;
-
   const cardCls = {
     title: "text-lg font-medium text-primary-foreground",
     val: "text-end text-4xl text-primary-foreground font-semibold",
@@ -84,7 +83,7 @@ const PageClient = (
               <Label>Period</Label>
               <p>{sub?.period}</p>
             </div>
-            {sub?.plan === "Free" && (
+            {(sub?.plan === "Free" || sub?.plan_id === "ppd") && (
               <div className="pt-5">
                 <Link
                   href={"/upgrade"}

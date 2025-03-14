@@ -6,7 +6,7 @@ import { Payments as P } from "razorpay/dist/types/payments";
 
 export type RZPNotes = {
   org_id: string;
-  user_id: string;
+  user: string;
   plan_name: string;
   plan_id: string;
   [key: string]: string | undefined; // Allows additional custom metadata fields
