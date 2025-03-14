@@ -13,7 +13,7 @@ const Page = async (props: {
 }) => {
   const data = await createCheckout(props.searchParams);
   if (data.error) {
-    throw new Error(data.error);
+    throw data.error;
   }
 
   return <PageClient {...data.data} />;
