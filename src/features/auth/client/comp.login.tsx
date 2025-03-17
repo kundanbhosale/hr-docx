@@ -17,7 +17,6 @@ import { parseAsString, useQueryState } from "nuqs";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect } from "node_modules/react-resizable-panels/dist/declarations/src/vendor/react";
 import { useAuthStore } from "./store";
 
 export function LoginForm({

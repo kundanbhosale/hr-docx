@@ -16,6 +16,8 @@ import ErrorPage from "@/components/pages/error";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { GoogleAnalytics } from "@next/third-parties/google";
+// import { CSPostHogProvider } from "@/contexts/posthog";
 
 const font = Lexend_Deca({ subsets: ["latin"] });
 
@@ -36,6 +38,8 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${font.className} antialiased`}>
+        <GoogleAnalytics gaId="G-J6LNP87J9V" />
+        {/* <CSPostHogProvider> */}
         {isMobile ? (
           <div className="h-screen flex">
             <ErrorPage
@@ -82,6 +86,7 @@ export default async function RootLayout({
             </OnbordaProvider>
           </QueryProvider>
         )}
+        {/* </CSPostHogProvider> */}
       </body>
     </html>
   );
