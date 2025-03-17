@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { captureScreenshot } from "@/lib/screenshot";
 import { authClient } from "@/features/auth/client";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function DocPage({
   documentId,
