@@ -5,8 +5,8 @@ import { z } from "zod";
 
 export async function GET(request: Request) {
   // Extract query parameter from the URL
-
   // Query the database for templates with search and scoring
+
   try {
     const url = new URL(request.url);
     const search = z
