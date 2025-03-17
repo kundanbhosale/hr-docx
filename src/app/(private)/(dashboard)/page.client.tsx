@@ -69,8 +69,8 @@ const PageClient = (
           </div> */}
           </div>
         </div>
-        <div className="flex flex-col">
-          <div className="sticky top-10 rounded-md bg-accent p-4 space-y-8 flex flex-col">
+        <div className="flex flex-col rounded-md bg-accent">
+          <div className="sticky top-10 p-4 space-y-8 flex flex-col">
             <div className="bg-background rounded-md space-y-4 p-4 [&_p]:text-muted-foreground">
               <div className="flex justify-between gap-2">
                 <Label>Current Plan</Label>
