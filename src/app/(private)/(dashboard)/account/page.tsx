@@ -20,6 +20,7 @@ import Image from "next/image";
 import { format } from "date-fns";
 import Team from "./team";
 import { Skeleton } from "@/components/ui/skeleton";
+import Loading from "./loading";
 
 export default function CompanyLayout() {
   const [view, setView] = useQueryState(
@@ -51,6 +52,10 @@ export default function CompanyLayout() {
       label: "Team",
     },
   ];
+
+  if (isPending) {
+    return <Loading />;
+  }
 
   return (
     <>

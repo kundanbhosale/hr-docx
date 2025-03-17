@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Loading() {
   return (
-    <div className="animate-pulse space-y-8">
+    <div className="animate-pulse space-y-8 m-8">
       <div className="space-y-4">
         <div className="bg-border/40 h-10 max-w-xl" />
         <div className="bg-border/40 h-6 w-48" />
