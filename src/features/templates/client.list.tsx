@@ -40,17 +40,19 @@ export const TemplatesList = ({
     return <h1>Failed to load templates</h1>;
   }
 
-  const handleFocus = (slug: string) => {
+  const handleFocus = (slug: string, smooth?: boolean = true) => {
     const element = document.getElementById(idPrefix ? idPrefix : "" + slug);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      element.scrollIntoView({
+        behavior: smooth ? "smooth" : "instant",
+        block: "start",
+      });
     }
   };
 
   useEffect(() => {
-    console.log(window.location.hash.split("#")[1]);
     window.location.hash && handleFocus(window.location.hash.split("#")[1]);
-  }, [isLoading]);
+  }, [data]);
 
   return (
     <div className="grid grid-cols-[200px,auto] gap-8">
