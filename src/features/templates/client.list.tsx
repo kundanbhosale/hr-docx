@@ -41,7 +41,7 @@ export const TemplatesList = ({
   }
 
   const handleFocus = (slug: string) => {
-    const element = document.getElementById(idPrefix + slug);
+    const element = document.getElementById(idPrefix ? idPrefix : "" + slug);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -216,10 +216,10 @@ export function SearchTemplateList({
       )}
     />
   );
+
   const List = (
     <TemplatesList search={search} onSelect={onSelect} idPrefix={idPrefix} />
   );
-
   if (popupTrigger)
     return (
       <Sheet>

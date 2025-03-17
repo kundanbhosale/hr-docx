@@ -50,13 +50,15 @@ export const DashboardLayout = ({
         }}
       >
         <motion.div>
-          <Image
-            key={String(open)}
-            src={!open ? appConfig.logo.icon : appConfig.logo.logoWhite}
-            alt={appConfig.title.short}
-            width={!open ? 40 : 200}
-            height={!open ? 40 : 40}
-          />
+          <Link href={"/"}>
+            <Image
+              key={String(open)}
+              src={!open ? appConfig.logo.icon : appConfig.logo.logoWhite}
+              alt={appConfig.title.short}
+              width={!open ? 40 : 200}
+              height={!open ? 40 : 40}
+            />
+          </Link>
         </motion.div>
         <div className="space-y-2">
           {navs.primary.map((n, i) => (

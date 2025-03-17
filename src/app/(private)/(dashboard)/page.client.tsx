@@ -34,92 +34,98 @@ const PageClient = (
   const { data: sess } = authClient.useSession();
 
   return (
-    <div>
+    <>
       <DashboardHeader title={sess?.user.name || ""} label="Hello" />
       <DashboardBody className="p-8 grid grid-cols-[auto_400px] gap-8">
-        <div className="grid grid-cols-4 gap-8">
-          <div className={cardCls.body}>
-            <h1 className={cardCls.title}>Total Documents</h1>
-            <br />
-            <p className={cardCls.val}>{data.documents}</p>
+        <div className="space-y-8">
+          <div className="grid grid-cols-4 gap-8 h-24">
+            <div className={cardCls.body}>
+              <h1 className={cardCls.title}>Total Documents</h1>
+              <br />
+              <p className={cardCls.val}>{data.documents}</p>
+            </div>
+            <div className={cardCls.body}>
+              <h1 className={cardCls.title}>Downloaded</h1>
+              <br />
+              <p className={cardCls.val}>{data.downloaded}</p>
+            </div>
+            <div className={cardCls.body}>
+              <h1 className={cardCls.title}>Favorites</h1>
+              <br />
+              <p className={cardCls.val}>{data.favorites}</p>
+            </div>
+            <div className={cardCls.body}>
+              <h1 className={cardCls.title}>Drafts</h1>
+              <br />
+              <p className={cardCls.val}>{data.drafts}</p>
+            </div>
           </div>
-          <div className={cardCls.body}>
-            <h1 className={cardCls.title}>Downloaded</h1>
-            <br />
-            <p className={cardCls.val}>{data.downloaded}</p>
-          </div>
-          <div className={cardCls.body}>
-            <h1 className={cardCls.title}>Favorites</h1>
-            <br />
-            <p className={cardCls.val}>{data.favorites}</p>
-          </div>
-          <div className={cardCls.body}>
-            <h1 className={cardCls.title}>Drafts</h1>
-            <br />
-            <p className={cardCls.val}>{data.drafts}</p>
-          </div>
-          <div className="col-span-4">
-            <Docs documents={documents} />
-          </div>
-          <div className="col-span-4">
+          <div className="grid grid-cols-4 gap-8">
+            <div className="col-span-4">
+              <Docs documents={documents} />
+            </div>
+            {/* <div className="col-span-4">
             <Modules />
+          </div> */}
           </div>
         </div>
         <div className="rounded-md bg-accent p-4 space-y-8 flex flex-col">
-          <div className="bg-background rounded-md space-y-4 p-4 [&_p]:text-muted-foreground">
-            <div className="flex justify-between gap-2">
-              <Label>Current Plan</Label>
-              <p>{sub?.plan || "Free"}</p>
-            </div>
-            <div className="flex justify-between gap-2">
-              <Label>Total Monthly Downloads</Label>
-              <p>{sub?.total}</p>
-            </div>
-            <div className="flex justify-between gap-2">
-              <Label>Monthly Downloads Remaining</Label>
-              <p>{sub?.credits.download}</p>
-            </div>
-            <div className="flex justify-between gap-2">
-              <Label>Period</Label>
-              <p>{sub?.period}</p>
-            </div>
-            {(sub?.plan === "Free" || sub?.plan_id === "ppd") && (
-              <div className="pt-5">
-                <Link
-                  href={"/upgrade"}
-                  className={cn(buttonVariants({ size: "lg" }), "w-full")}
-                >
-                  Upgrade Plan
-                </Link>
+          <div className="sticky top-10">
+            <div className="bg-background rounded-md space-y-4 p-4 [&_p]:text-muted-foreground">
+              <div className="flex justify-between gap-2">
+                <Label>Current Plan</Label>
+                <p>{sub?.plan || "Free"}</p>
               </div>
-            )}
-          </div>
-          <div className="text-primary space-y-4 flex-1 flex flex-col justify-between max-h-[350px]">
-            <div className="space-y-2">
-              <h1 className="text-2xl">Save More</h1>
-              <h1 className="text-2xl font-semibold">With Unlimited Plans</h1>
-              <p className="text-base">
-                Choose a plan and get onboard in minutes. Enjoy creating
-                unlimited documents with exciting editing features.
-              </p>
+              <div className="flex justify-between gap-2">
+                <Label>Total Monthly Downloads</Label>
+                <p>{sub?.total}</p>
+              </div>
+              <div className="flex justify-between gap-2">
+                <Label>Monthly Downloads Remaining</Label>
+                <p>{sub?.credits.download}</p>
+              </div>
+              <div className="flex justify-between gap-2">
+                <Label>Period</Label>
+                <p>{sub?.period}</p>
+              </div>
+              {(sub?.plan === "Free" || sub?.plan_id === "ppd") && (
+                <div className="pt-5">
+                  <Link
+                    href={"/upgrade"}
+                    className={cn(buttonVariants({ size: "lg" }), "w-full")}
+                  >
+                    Upgrade Plan
+                  </Link>
+                </div>
+              )}
             </div>
-            <Link
-              href={"/upgrade?view=all_plans"}
-              className="flex gap-2 items-center text-base"
-            >
-              <ArrowRight /> Explore All Payment Plans
-            </Link>
-            <Image
-              src={"/app/ico.svg"}
-              alt="HRDocx"
-              className=""
-              width={50}
-              height={50}
-            />
+            <div className="text-primary space-y-4 flex-1 flex flex-col justify-between max-h-[350px]">
+              <div className="space-y-2">
+                <h1 className="text-2xl">Save More</h1>
+                <h1 className="text-2xl font-semibold">With Unlimited Plans</h1>
+                <p className="text-base">
+                  Choose a plan and get onboard in minutes. Enjoy creating
+                  unlimited documents with exciting editing features.
+                </p>
+              </div>
+              <Link
+                href={"/upgrade?view=all_plans"}
+                className="flex gap-2 items-center text-base"
+              >
+                <ArrowRight /> Explore All Payment Plans
+              </Link>
+              <Image
+                src={"/app/ico.svg"}
+                alt="HRDocx"
+                className=""
+                width={50}
+                height={50}
+              />
+            </div>
           </div>
         </div>
       </DashboardBody>
-    </div>
+    </>
   );
 };
 

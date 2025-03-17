@@ -51,6 +51,7 @@ export default function DocPage({
   });
 
   const { data: activeOrg, isPending } = authClient.useActiveOrganization();
+  const [filled, setFilled] = useState(false);
 
   const router = useRouter();
   const data = result?.data;
@@ -223,6 +224,15 @@ export default function DocPage({
     onHashChanged();
   }, [nodeFocused]);
 
+  useEffect(() => {
+    if (progress !== 100) {
+      return setFilled(false);
+    }
+    const timer = setTimeout(() => {
+      setFilled(true);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [progress, filled]);
   return (
     <div className="grid grid-cols-5">
       <div
@@ -253,8 +263,6 @@ export default function DocPage({
         )}
       </div>
       <div className="col-span-3 flex relative" id="editor">
-        {/* <div className="bg-muted h-full w-full border" /> */}
-
         {isLoading ? (
           <div className="flex-1 p-8 flex flex-col gap-5">
             <Skeleton className="h-10" />
@@ -268,22 +276,23 @@ export default function DocPage({
                 pending && "hidden"
               )}
             >
-              <>
-                <div
-                  className={cn(
-                    "size-16 flex text-primary-foreground flex-col items-center justify-center",
-                    !inputFocused && "hidden"
-                  )}
-                >
-                  {/* <motion.pre className="block font-semibold text-2xl">{`${rounded.get()}%`}</motion.pre> */}
-                  <span className="block font-semibold text-2xl">
-                    <Counter value={progress} />%
-                  </span>
+              {inputFocused && !filled ? (
+                <>
+                  <div
+                    className={cn(
+                      "size-16 flex text-primary-foreground flex-col items-center justify-center",
+                      !inputFocused && "hidden"
+                    )}
+                  >
+                    {/* <motion.pre className="block font-semibold text-2xl">{`${rounded.get()}%`}</motion.pre> */}
+                    <span className="block font-semibold text-2xl">
+                      <Counter value={progress} />%
+                    </span>
 
-                  <p className="block font-semibold">Progress</p>
-                </div>
-              </>
-              {!inputFocused && (
+                    <p className="block font-semibold">Progress</p>
+                  </div>
+                </>
+              ) : (
                 <div className="flex">
                   <a
                     onClick={downloadPDF}
