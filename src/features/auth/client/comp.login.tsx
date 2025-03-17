@@ -29,11 +29,7 @@ export function LoginForm({
     "verify-email",
     parseAsString
   );
-  const [callbackURL, setCallbackURL] = useQueryState(
-    "cb",
-    parseAsString.withDefault("/")
-  );
-  const { update } = useAuthStore();
+  const [callbackURL] = useQueryState("cb", parseAsString.withDefault("/"));
 
   // useEffect(() => {
   //   update({ callback: url });

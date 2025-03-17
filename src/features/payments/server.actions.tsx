@@ -152,7 +152,7 @@ export const createCheckout = action(async (data: CreateCheckoutSchema) => {
       sub = await razorpay.subscriptions
         .create({
           plan_id,
-          total_count: 360,
+          total_count: 200,
           offer_id: offer_id || undefined,
           notes: {
             plan_id: result.plan.id,

@@ -8,6 +8,7 @@ const PageClient = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const [template, setTemplate] = useQueryState("template", parseAsString);
+
   if (!template)
     return (
       <>

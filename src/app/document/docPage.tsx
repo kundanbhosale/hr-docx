@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { captureScreenshot } from "@/lib/screenshot";
 import { authClient } from "@/features/auth/client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function DocPage({
   documentId,
@@ -28,6 +28,8 @@ export default function DocPage({
   documentId?: string;
   templateId?: string;
 }) {
+  const params = useSearchParams();
+
   const {
     formState,
     reset,
@@ -50,30 +52,28 @@ export default function DocPage({
       await getSingleDocument({ id: documentId, template: templateId }),
   });
 
-  const { data: activeOrg, isPending } = authClient.useActiveOrganization();
   const [filled, setFilled] = useState(false);
 
   const router = useRouter();
   const data = result?.data;
   const sess = authClient.useSession();
+  const { data: activeOrg, isPending } = authClient.useActiveOrganization();
+
   const [open, setOpen] = React.useState(false);
   const [downloads, setDownloads] = React.useState(0);
   const [pending, startTransition] = React.useTransition();
   const [key, setKey] = useState(0);
   const saveFn = async (shouldDownload?: boolean) => {
-    if (!sess.data?.session)
-      return router.push(
-        "/login?cb=" + window.location.pathname + window.location.search
-      );
+    const cb = window.location.pathname + "?" + params.toString();
+
+    if (!sess.data?.session) return router.push("/login?cb=" + cb);
 
     if (!sess.data?.session.activeOrganizationId) {
       return router.push("/org");
     }
 
-    if ((activeOrg?.metadata?.credits?.download || 0) === 0) {
-      return router.push(
-        "/upgrade?cb=" + window.location.pathname + window.location.search
-      );
+    if (shouldDownload && (activeOrg?.metadata?.credits?.download || 0) === 0) {
+      return router.push("/upgrade?cb=" + cb);
     }
 
     const el = document.getElementsByClassName("-tiptap-editor")[0];
@@ -143,17 +143,18 @@ export default function DocPage({
   };
 
   useEffect(() => {
-    if (!data || (stateDocId == data.id && data.template == stateTemplate))
+    if (!data || (stateDocId === data.id && data.template === stateTemplate))
       return;
-    console.log(
-      !data,
-      stateDocId == data.id && data.template == stateTemplate,
-      data,
-      stateDocId,
-      data.id,
-      data.template,
-      stateTemplate
-    );
+    // console.log(
+    //   !data,
+    //   stateDocId === data.id && data.template === stateTemplate,
+    //   data,
+    //   stateDocId,
+    //   data.id,
+    //   data.template,
+    //   stateTemplate
+    // );
+
     reset(data);
     if (data?.schema.length === 0) {
       update({ progress: 100 });

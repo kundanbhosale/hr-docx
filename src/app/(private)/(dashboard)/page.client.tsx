@@ -26,8 +26,8 @@ const PageClient = (
   const documents = props?.documents;
   const sub = props?.sub;
   const cardCls = {
-    title: "text-lg font-medium text-primary-foreground",
-    val: "text-end text-4xl text-primary-foreground font-semibold",
+    title: "text-md xl:text-lg font-medium text-primary-foreground",
+    val: "text-end text-2xl xl:text-4xl text-primary-foreground font-semibold",
     body: "px-4 py-2 border rounded-md bg-primary",
   };
 
@@ -38,7 +38,7 @@ const PageClient = (
       <DashboardHeader title={sess?.user.name || ""} label="Hello" />
       <DashboardBody className="p-8 grid grid-cols-[auto_400px] gap-8">
         <div className="space-y-8">
-          <div className="grid grid-cols-4 gap-8 h-24">
+          <div className="grid grid-cols-4 gap-8 h-fit">
             <div className={cardCls.body}>
               <h1 className={cardCls.title}>Total Documents</h1>
               <br />
@@ -69,8 +69,8 @@ const PageClient = (
           </div> */}
           </div>
         </div>
-        <div className="rounded-md bg-accent p-4 space-y-8 flex flex-col">
-          <div className="sticky top-10">
+        <div className="flex flex-col">
+          <div className="sticky top-10 rounded-md bg-accent p-4 space-y-8 flex flex-col">
             <div className="bg-background rounded-md space-y-4 p-4 [&_p]:text-muted-foreground">
               <div className="flex justify-between gap-2">
                 <Label>Current Plan</Label>

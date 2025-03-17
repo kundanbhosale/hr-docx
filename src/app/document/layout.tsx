@@ -13,7 +13,7 @@ import {
 import React, { ReactNode, useEffect, useState } from "react";
 
 export default function Layout({ children }: { children: ReactNode }) {
-  const { data } = authClient.useSession();
+  const { data, isPending } = authClient.useSession();
 
   const [navs, setNavs] = useState({
     primary: [

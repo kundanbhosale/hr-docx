@@ -33,6 +33,8 @@ export const afterAuthMiddleware = createAuthMiddleware(async (ctx) => {
           }
         });
 
+      console.log("found org id : " + orgId);
+
       if (!orgId) {
         console.log("Creating new org");
 
@@ -78,7 +80,7 @@ export const afterAuthMiddleware = createAuthMiddleware(async (ctx) => {
         .where("auth.sessions.id", "=", newSession.session.id)
         .set({ activeOrganizationId: orgId })
         .execute();
-      console.log("Session updated...");
+      console.log("Session updated...", newSession.session.id);
     }
   } catch (err) {
     console.log(err);
