@@ -18,6 +18,7 @@ import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuthStore } from "./store";
+import { env } from "@/app/env";
 
 export function LoginForm({
   className,
@@ -99,7 +100,9 @@ export function LoginForm({
               <GalleryVerticalEnd className="size-4" />
             </div>
             HR Docx. */}
-        <Image src="/app/logo.png" alt="HR Docx" width={150} height={44} />
+        <Link href={env.WWW_URL}>
+          <Image src="/app/logo.png" alt="HR Docx" width={150} height={44} />
+        </Link>
       </a>
       <div className={cn("flex flex-col gap-6", className)} {...props}>
         <Card>

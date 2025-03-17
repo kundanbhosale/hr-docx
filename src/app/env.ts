@@ -15,4 +15,6 @@ export const env = {
     process.env.STAFF_DOMAIN === "ignore"
       ? process.env.STAFF_DOMAIN
       : process.env.STAFF_DOMAIN?.split(","),
+
+  WWW_URL: "https://www.hrdocx.com",
 };
