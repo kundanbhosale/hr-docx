@@ -112,5 +112,5 @@ const nouns = [
 export const generateSlug = () => {
   return `${adjectives[Math.floor(Math.random() * adjectives.length)]}-${
     nouns[Math.floor(Math.random() * nouns.length)]
-  }-${nanoid(10)}}`;
+  }-${nanoid(10)}`;
 };
