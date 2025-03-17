@@ -40,7 +40,7 @@ export const TemplatesList = ({
     return <h1>Failed to load templates</h1>;
   }
 
-  const handleFocus = (slug: string, smooth?: boolean = true) => {
+  const handleFocus = (slug: string, smooth: boolean = true) => {
     const element = document.getElementById(idPrefix ? idPrefix : "" + slug);
     if (element) {
       element.scrollIntoView({
