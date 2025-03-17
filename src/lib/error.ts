@@ -19,6 +19,10 @@ export function action<T extends any[], U>(
         err instanceof Error ? err.constructor.name : "Not an instance of Error"
       );
 
+      if (err?.cause === "no-credits") {
+        throw err;
+      }
+
       if (err instanceof ZodError) {
         const validationError = fromError(err);
         return redirect(

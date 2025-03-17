@@ -36,7 +36,7 @@ export const createPDF = action(async (html: string) => {
     .executeTakeFirstOrThrow();
 
   if (org.metadata.credits.download <= 0)
-    throw new ClientError("No credits left");
+    throw new ClientError("No credits left", { cause: "no-credits" });
 
   const browser = await getBrowser();
   const page = await browser.newPage();

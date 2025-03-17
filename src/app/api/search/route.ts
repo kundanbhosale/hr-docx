@@ -1,5 +1,6 @@
 import { db } from "@/_server/db";
 import { getHost } from "@/lib/headers";
+import { sql } from "kysely";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -19,6 +20,7 @@ export async function GET(request: Request) {
       .select((eb) => ["id", "slug", "title", "thumbnail"])
       .where("deleted_at", "is", null)
       .where("templates.title", "ilike", `%${search}%`)
+      .orderBy(sql`LOWER(templates.title)`)
       // .where((eb) =>
       //   eb.or([
       //     eb("templates.title", "ilike", `%${search}%`),

@@ -5,11 +5,13 @@ import Script from "next/script";
 import { AwaitedReturn } from "@/lib/types";
 import { createCheckout } from "@/features/payments/server.actions";
 import Loading from "@/components/common/loading";
+import { useRouter } from "next/navigation";
 
 export const PageClient = (
   props: AwaitedReturn<typeof createCheckout>["data"]
 ) => {
   const { sub, user, session, order, plan } = props || {};
+  const router = useRouter();
   const processPayment = async () => {
     const params = new URLSearchParams(window.location.search);
     params.set("success", "true");
@@ -29,10 +31,23 @@ export const PageClient = (
         user: user?.id,
         org_id: session?.activeOrganizationId,
       },
+      modal: {
+        ondismiss: function () {
+          router.back();
+        },
+      },
     };
 
     const razorpay = new (window as any).Razorpay(options);
+
     razorpay.open();
+
+    razorpay.on("payment.failed", function (response) {
+      router.push(
+        "/error?state=" +
+          btoa(JSON.stringify({ message: response.description }))
+      );
+    });
   };
 
   useEffect(() => {

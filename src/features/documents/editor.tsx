@@ -167,7 +167,7 @@ export const DocumentEditor = React.forwardRef<
     }
 
     return (
-      <div className={"relative flex-1 flex"}>
+      <div className={"relative flex-1 flex"} inert>
         <Dialog open={open || pending} onOpenChange={(v) => setOpen(v)}>
           <DialogContent className="flex items-center justify-center flex-col">
             {pending ? (
