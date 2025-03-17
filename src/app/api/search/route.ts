@@ -19,17 +19,16 @@ export async function GET(request: Request) {
       .selectFrom("templates")
       .select((eb) => ["id", "slug", "title", "thumbnail"])
       .where("deleted_at", "is", null)
-      .where("templates.title", "ilike", `%${search}%`)
-      .orderBy(sql`LOWER(templates.title)`)
-      // .where((eb) =>
-      //   eb.or([
-      //     eb("templates.title", "ilike", `%${search}%`),
-      //     sql<boolean>`similarity(templates.title, ${sql.val(search)}) >= 0.3`,
-      //     sql<boolean>`templates.title % ${sql.val(search)}`,
-      //   ])
-      // )
-      // Order by the similarity score in descending order
-      // .orderBy(sql`similarity(templates.title, ${sql.val(search)})`, "desc")
+      // .where("templates.title", "ilike", `%${search}%`)
+      // .orderBy(sql`LOWER(templates.title)`)
+      .where((eb) =>
+        eb.or([
+          eb("templates.title", "ilike", `%${search}%`),
+          sql<boolean>`similarity(templates.title, ${sql.val(search)}) >= 0.3`,
+          sql<boolean>`templates.title % ${sql.val(search)}`,
+        ])
+      )
+      .orderBy(sql`similarity(templates.title, ${sql.val(search)})`, "desc")
       .limit(20)
       .execute();
 
