@@ -42,11 +42,19 @@ export default function Layout({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    if (data?.session.id) {
-      const d = navs;
-      d.secondary.unshift({ label: "Sign out", url: "/logout", icon: LogOut });
-      setNavs(d);
-    }
+    const timer = setTimeout(() => {
+      if (data?.session.id) {
+        if (navs.secondary.find((u) => u.url === "/logout")) return;
+        const d = navs;
+        d.secondary.unshift({
+          label: "Sign out",
+          url: "/logout",
+          icon: LogOut,
+        });
+        setNavs(d);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
   }, [data]);
 
   return <DashboardLayout navs={navs}>{children}</DashboardLayout>;
