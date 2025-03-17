@@ -47,6 +47,11 @@ export const TemplatesList = ({
     }
   };
 
+  useEffect(() => {
+    console.log(window.location.hash.split("#")[1]);
+    window.location.hash && handleFocus(window.location.hash.split("#")[1]);
+  }, [isLoading]);
+
   return (
     <div className="grid grid-cols-[200px,auto] gap-8">
       <div className="flex flex-col h-fit sticky top-2">

@@ -49,6 +49,8 @@ export const getPublicTemplates = action(async (props: { search: string }) => {
   }
 
   const result = await query.execute();
+  console.log(result);
+
   return result;
 });
 

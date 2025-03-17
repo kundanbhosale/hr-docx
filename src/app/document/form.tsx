@@ -84,8 +84,8 @@ export function DocumentForm() {
           </h1>
 
           <p className={cn("text-base max-w-sm mb-8", !isEmpty && "mb-0")}>
-            You can edit document on right side or simple download pdf by click
-            on button below:
+            You can fill the form below or edit it on the right side to complete
+            the document.
           </p>
         </div>
 
