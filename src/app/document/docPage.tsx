@@ -65,8 +65,9 @@ export default function DocPage({
   const [downloads, setDownloads] = React.useState(0);
   const [pending, startTransition] = React.useTransition();
   const [key, setKey] = useState(0);
+
   const saveFn = async (shouldDownload?: boolean) => {
-    if (!sess.data?.session) return router.push("/login?cb=" + cb);
+    if (!sess.data?.session.id) return router.push("/login?cb=" + cb);
 
     if (!sess.data?.session.activeOrganizationId) {
       return router.push("/org");
@@ -159,7 +160,7 @@ export default function DocPage({
 
   React.useEffect(() => {
     const focused = (e: FocusEvent) => {
-      if (!sess.data?.session) return router.push("/login?cb=" + cb);
+      if (!sess.data?.session.id) return router.push("/login?cb=" + cb);
 
       const target = (e as any)?.srcElement as HTMLElement | null;
 
@@ -177,7 +178,7 @@ export default function DocPage({
       document.removeEventListener("focusin", focused as any);
       document.removeEventListener("focusout", notFocused);
     };
-  }, []);
+  }, [sess]);
 
   useEffect(() => {
     const style = document.createElement("style");

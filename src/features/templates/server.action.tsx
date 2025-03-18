@@ -42,6 +42,7 @@ export const getPublicTemplates = action(async (props: { search: string }) => {
       'created_by', templates.created_by,
       'is_public', templates.is_public,
       'title', templates.title,
+       'slug', templates.slug,
       'thumbnail', templates.thumbnail
     ))`.as("templates"), // Aggregate all template data into a JSON array
       sql<Groups>`
