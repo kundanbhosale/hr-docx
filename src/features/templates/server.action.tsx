@@ -14,7 +14,7 @@ import { redirect, RedirectType } from "next/navigation";
 import { z } from "zod";
 import { Groups, Templates } from "@/_server/db/types";
 import { revalidatePath } from "next/cache";
-
+// test
 export const getPublicTemplates = action(async (props: { search: string }) => {
   const { search } = z.object({ search: z.string() }).parse(props);
   let query = db
