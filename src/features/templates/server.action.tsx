@@ -24,9 +24,26 @@ export const getPublicTemplates = action(async (props: { search: string }) => {
     .leftJoin("groups", "groups.id", "templates.group")
     .select((eb) => [
       "groups.id",
-      sql<Array<Templates>>`json_agg(to_jsonb(templates) - 'group')`.as(
-        "templates"
-      ), // Aggregate all template data into a JSON array
+      sql<
+        Array<
+          Pick<
+            Templates,
+            | "id"
+            | "created_at"
+            | "created_by"
+            | "is_public"
+            | "title"
+            | "thumbnail"
+          >
+        >
+      >`json_agg(jsonb_build_object(
+      'id', templates.id,
+      'created_at', templates.created_at,
+      'created_by', templates.created_by,
+      'is_public', templates.is_public,
+      'title', templates.title,
+      'thumbnail', templates.thumbnail
+    ))`.as("templates"), // Aggregate all template data into a JSON array
       sql<Groups>`
       json_build_object(
         'id', groups.id,
