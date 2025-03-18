@@ -59,13 +59,13 @@ export default function DocPage({
   const sess = authClient.useSession();
   const { data: activeOrg, isPending } = authClient.useActiveOrganization();
 
+  const cb = window.location.pathname + "?" + params.toString();
+
   const [open, setOpen] = React.useState(false);
   const [downloads, setDownloads] = React.useState(0);
   const [pending, startTransition] = React.useTransition();
   const [key, setKey] = useState(0);
   const saveFn = async (shouldDownload?: boolean) => {
-    const cb = window.location.pathname + "?" + params.toString();
-
     if (!sess.data?.session) return router.push("/login?cb=" + cb);
 
     if (!sess.data?.session.activeOrganizationId) {
@@ -145,15 +145,6 @@ export default function DocPage({
   useEffect(() => {
     if (!data || (stateDocId === data.id && data.template === stateTemplate))
       return;
-    // console.log(
-    //   !data,
-    //   stateDocId === data.id && data.template === stateTemplate,
-    //   data,
-    //   stateDocId,
-    //   data.id,
-    //   data.template,
-    //   stateTemplate
-    // );
 
     reset(data);
     if (data?.schema.length === 0) {
@@ -168,6 +159,8 @@ export default function DocPage({
 
   React.useEffect(() => {
     const focused = (e: FocusEvent) => {
+      if (!sess.data?.session) return router.push("/login?cb=" + cb);
+
       const target = (e as any)?.srcElement as HTMLElement | null;
 
       if (target?.tagName === "INPUT") {
