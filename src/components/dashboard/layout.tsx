@@ -67,6 +67,8 @@ export const DashboardLayout = ({
                 className={cn(
                   "flex items-center justify-center text-lg font-semibold py-2 border-b border-border/20 truncate rounded-md",
                   open && "justify-start rounded-none",
+                  !open && "hover:bg-muted",
+
                   active === n.url && "bg-primary"
                 )}
                 href={n.url}
@@ -97,6 +99,7 @@ export const DashboardLayout = ({
               className={cn(
                 "flex items-center justify-center text-lg font-semibold py-2 border-b border-border/20 truncate rounded-md",
                 open && "justify-start rounded-none",
+                !open && "hover:bg-muted",
                 active === n.url && "bg-primary"
               )}
               href={n.url}
@@ -120,7 +123,9 @@ export const DashboardLayout = ({
           ))}
         </div>
       </motion.nav>
-      <div className="flex-1 flex flex-col">{children}</div>
+      <div className="flex-1 flex flex-col" onClick={() => setOpen(false)}>
+        {children}
+      </div>
     </main>
   );
 };
