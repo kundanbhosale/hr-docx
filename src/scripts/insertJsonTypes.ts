@@ -85,7 +85,6 @@ const transformFile = async () => {
           (column) => column.name == columnName
         );
         const type = column?.comment?.split("@type:")[1];
-        console.log({ matchedColumn: column });
 
         if (type) return line.replace(match.split(": ")[1], type);
       }

@@ -61,7 +61,6 @@ export const getSingleDocument = action(
         .where("id", "=", id)
         .selectAll()
         .executeTakeFirstOrThrow();
-      console.log(id);
       return document as Selectable<Documents>;
     } else {
       if (!props.template) throw new ClientError("No template provided");

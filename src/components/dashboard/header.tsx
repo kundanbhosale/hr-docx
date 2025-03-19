@@ -25,7 +25,7 @@ export const DashboardHeader = ({
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           className="h-16 text-lg w-full"
-          onSelect={(c) => console.log(c)}
+          onSelect={(c) => c}
           idPrefix="search"
           popupTrigger={
             <>

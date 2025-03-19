@@ -82,7 +82,6 @@ export function DefaultComboBox({
                   />
                 </span>
               )}
-              {console.log(selected.image)}
 
               <span className=" truncate">{selected.label}</span>
             </>

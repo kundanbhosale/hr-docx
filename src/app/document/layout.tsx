@@ -1,5 +1,6 @@
 "use client";
 import { DashboardLayout } from "@/components/dashboard/layout";
+import Loading from "@/components/ui/loading";
 import { authClient } from "@/features/auth/client";
 import {
   CircleHelp,
@@ -15,7 +16,7 @@ import React, { ReactNode, useEffect, useState } from "react";
 export default function Layout({ children }: { children: ReactNode }) {
   const { data, isPending } = authClient.useSession();
 
-  const [navs, setNavs] = useState({
+  const navs = {
     primary: [
       {
         label: "My Dashboard",
@@ -38,24 +39,21 @@ export default function Layout({ children }: { children: ReactNode }) {
         icon: CircleUser,
       },
     ],
-    secondary: [{ label: "Help", url: "/help", icon: CircleHelp }],
-  });
+    secondary: [
+      { label: "Help", url: "/help", icon: CircleHelp },
+      { label: "Sign out", url: "/logout", icon: LogOut },
+    ],
+  };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (data?.session.id) {
-        if (navs.secondary.find((u) => u.url === "/logout")) return;
-        const d = navs;
-        d.secondary.unshift({
-          label: "Sign out",
-          url: "/logout",
-          icon: LogOut,
-        });
-        setNavs(d);
-      }
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [data]);
+  if (isPending) {
+    return <Loading className="min-h-screen" />;
+  }
+
+  console.log(data, !data?.session?.id);
+
+  if (!data?.session?.id) {
+    return <>{children}</>;
+  }
 
   return <DashboardLayout navs={navs}>{children}</DashboardLayout>;
 }

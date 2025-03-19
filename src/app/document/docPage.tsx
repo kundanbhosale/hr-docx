@@ -200,6 +200,7 @@ export default function DocPage({
       const container = document.getElementById("editor-container");
       const el = Array.from(document.querySelectorAll(`[data-id="${hash}"]`));
       if (!el || el.length === 0 || !container) return;
+
       Array.from(document.getElementsByClassName(focusedClass[0])).forEach(
         (e: any) => {
           e.classList.remove(...focusedClass);
@@ -228,6 +229,7 @@ export default function DocPage({
     }, 300);
     return () => clearTimeout(timer);
   }, [progress, filled]);
+
   return (
     <div className="grid grid-cols-5">
       <div

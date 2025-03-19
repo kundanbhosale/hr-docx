@@ -1,13 +1,11 @@
 import { CreateBtn } from "@/features/documents/components/createbtn";
 import { getAllDocuments } from "@/features/documents/server.action";
-import Image from "next/image";
 
 import Link from "next/link";
 import React from "react";
 
 const Page = async () => {
   const data = await getAllDocuments({});
-  console.log(data);
   return (
     <div>
       <div className="flex flex-wrap gap-8">

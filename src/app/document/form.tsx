@@ -110,7 +110,6 @@ export function DocumentForm() {
                 schema={f}
                 onChange={(value) => debounced(f.id, value)}
                 onFocus={() => {
-                  console.log("id", f.id);
                   update({ nodeFocused: f.id });
                 }}
                 onBlur={() => {
