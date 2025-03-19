@@ -15,8 +15,8 @@ const PostHogPageView = dynamic(() => import("../hooks/posthog"), {
 export function CSPostHogProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (env.IN_PROD) {
-      posthog.init("", {
-        api_host: "",
+      posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY!, {
+        api_host: env.NEXT_PUBLIC_POSTHOG_HOST,
         person_profiles: "identified_only", // or 'always' to create profiles for anonymous users as well
         capture_pageview: false,
         capture_pageleave: true, // Enable pageleave capture

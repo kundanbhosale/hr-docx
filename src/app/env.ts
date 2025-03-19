@@ -17,4 +17,6 @@ export const env = {
       : process.env.STAFF_DOMAIN?.split(","),
 
   WWW_URL: "https://www.hrdocx.com",
+  NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+  NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
 };
