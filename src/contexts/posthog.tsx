@@ -1,7 +1,7 @@
 // app/providers.js
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, Suspense, useEffect } from "react";
 import dynamic from "next/dynamic";
 
 import posthog from "posthog-js";
@@ -26,8 +26,19 @@ export function CSPostHogProvider({ children }: { children: ReactNode }) {
 
   return (
     <PostHogProvider client={posthog}>
-      <PostHogPageView />
+      <SuspendedPostHogPageView />
       {children}
     </PostHogProvider>
+  );
+}
+
+// Wrap PostHogPageView in Suspense to avoid the useSearchParams usage above
+// from de-opting the whole app into client-side rendering
+// See: https://nextjs.org/docs/messages/deopted-into-client-rendering
+function SuspendedPostHogPageView() {
+  return (
+    <Suspense fallback={null}>
+      <PostHogPageView />
+    </Suspense>
   );
 }

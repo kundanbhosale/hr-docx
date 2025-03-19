@@ -17,7 +17,7 @@ import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { GoogleAnalytics } from "@next/third-parties/google";
-// import { CSPostHogProvider } from "@/contexts/posthog";
+import { CSPostHogProvider } from "@/contexts/posthog";
 
 const font = Lexend_Deca({ subsets: ["latin"] });
 
@@ -39,54 +39,54 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${font.className} antialiased`}>
         <GoogleAnalytics gaId="G-J6LNP87J9V" />
-        {/* <CSPostHogProvider> */}
-        {isMobile ? (
-          <div className="h-screen flex">
-            <ErrorPage
-              title="Unsupported view"
-              message="Dashboard is only available for desktop screens."
-              noReset
-              actionBtn={
-                <Link
-                  href={"https://www.hrdocx.com"}
-                  title="HR Docx"
-                  className={cn(buttonVariants())}
+        <CSPostHogProvider>
+          {isMobile ? (
+            <div className="h-screen flex">
+              <ErrorPage
+                title="Unsupported view"
+                message="Dashboard is only available for desktop screens."
+                noReset
+                actionBtn={
+                  <Link
+                    href={"https://www.hrdocx.com"}
+                    title="HR Docx"
+                    className={cn(buttonVariants())}
+                  >
+                    Back to website
+                  </Link>
+                }
+              />
+            </div>
+          ) : (
+            <QueryProvider>
+              <OnbordaProvider>
+                <Onborda
+                  steps={tourSteps}
+                  showOnborda={true}
+                  interact={true}
+                  shadowRgb="55,48,163"
+                  shadowOpacity="0.8"
+                  cardComponent={TourCard}
                 >
-                  Back to website
-                </Link>
-              }
-            />
-          </div>
-        ) : (
-          <QueryProvider>
-            <OnbordaProvider>
-              <Onborda
-                steps={tourSteps}
-                showOnborda={true}
-                interact={true}
-                shadowRgb="55,48,163"
-                shadowOpacity="0.8"
-                cardComponent={TourCard}
-              >
-                <NuqsAdapter>
-                  <Toaster />
-                  <HolyLoader
-                    color="hsl(var(--primary))"
-                    height={3}
-                    speed={250}
-                    easing="linear"
-                    showSpinner={false}
-                  />
-                  <TooltipProvider>
-                    {modal}
-                    {children}
-                  </TooltipProvider>
-                </NuqsAdapter>
-              </Onborda>
-            </OnbordaProvider>
-          </QueryProvider>
-        )}
-        {/* </CSPostHogProvider> */}
+                  <NuqsAdapter>
+                    <Toaster />
+                    <HolyLoader
+                      color="hsl(var(--primary))"
+                      height={3}
+                      speed={250}
+                      easing="linear"
+                      showSpinner={false}
+                    />
+                    <TooltipProvider>
+                      {modal}
+                      {children}
+                    </TooltipProvider>
+                  </NuqsAdapter>
+                </Onborda>
+              </OnbordaProvider>
+            </QueryProvider>
+          )}
+        </CSPostHogProvider>
       </body>
     </html>
   );

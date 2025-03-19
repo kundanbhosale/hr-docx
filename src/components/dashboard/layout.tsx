@@ -120,7 +120,10 @@ export const DashboardLayout = ({
           ))}
         </div>
       </motion.nav>
-      <div className="flex-1 flex flex-col" onClick={() => setOpen(false)}>
+      <div
+        className="flex-1 flex flex-col"
+        onClick={() => open && setOpen(false)}
+      >
         {children}
       </div>
     </main>
