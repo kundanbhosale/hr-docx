@@ -50,7 +50,7 @@ const PageClient = (
               <p className={cardCls.val}>{data.downloaded}</p>
             </div>
             <div className={cardCls.body}>
-              <h1 className={cardCls.title}>Favorites</h1>
+              <h1 className={cardCls.title}>Favourites</h1>
               <br />
               <p className={cardCls.val}>{data.favorites}</p>
             </div>

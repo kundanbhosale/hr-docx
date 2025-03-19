@@ -181,6 +181,24 @@ export default function DocPage({
   }, [sess]);
 
   useEffect(() => {
+    const noCopy = (event) => {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        (event.key.toLowerCase() === "a" || event.key.toLowerCase() === "c")
+      ) {
+        event.preventDefault();
+        toast.error("Ctrl + A or Ctrl + C is disabled.");
+      }
+    };
+
+    document.addEventListener("keydown", noCopy);
+
+    return () => {
+      document.removeEventListener("keydown", noCopy);
+    };
+  }, []);
+
+  useEffect(() => {
     const style = document.createElement("style");
 
     style.textContent = `

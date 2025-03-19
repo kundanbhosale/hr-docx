@@ -49,8 +49,6 @@ export default function Layout({ children }: { children: ReactNode }) {
     return <Loading className="min-h-screen" />;
   }
 
-  console.log(data, !data?.session?.id);
-
   if (!data?.session?.id) {
     return <>{children}</>;
   }

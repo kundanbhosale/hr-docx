@@ -30,7 +30,11 @@ export const getDashboardData = action(async () => {
       .where("org", "=", sess!.session!.activeOrganizationId!)
       .select([
         (eb) => eb.fn.count<number>("id").as("total"),
-        (eb) => eb.fn.count<number>("starred").as("favorites"),
+        (eb) =>
+          eb.fn
+            .count<number>("starred")
+            .filterWhere("starred", "=", true)
+            .as("favorites"),
         (eb) => eb.fn.sum<number>("downloads").as("total_downloads"),
       ])
       .executeTakeFirstOrThrow(),
