@@ -93,6 +93,6 @@ export const dashboardNavs = {
   ],
   secondary: [
     { label: "Sign out", url: "/logout", icon: LogOut },
-    { label: "Help", url: "/help", icon: CircleHelp },
+    { label: "Help", url: "https://tawk.to/hrdocxsupport", icon: CircleHelp },
   ],
 };
