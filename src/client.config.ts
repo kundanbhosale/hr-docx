@@ -45,7 +45,7 @@ export const dashboardNavs = {
       icon: FileText,
     },
     {
-      label: "Templates",
+      label: "List of documents",
       url: "/templates",
       icon: Layers,
     },

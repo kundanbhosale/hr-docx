@@ -15,7 +15,7 @@ export const DashboardHeader = ({
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <div className="flex justify-between gap-8 w-full p-8 items-center border-b">
+    <div className="flex justify-between gap-12 w-full p-8 items-center border-b">
       <div className="text-primary">
         {label && <p className="font-semibold text-md">{label}</p>}
         <h1 className="font-semibold text-xl">{title}</h1>
@@ -32,7 +32,7 @@ export const DashboardHeader = ({
               <Input
                 icon={<Search />}
                 placeholder="Search Templates..."
-                className="max-w-sm rounded-full"
+                className="w-full rounded-full h-14 text-base border-primary border-2"
               />
             </>
           }

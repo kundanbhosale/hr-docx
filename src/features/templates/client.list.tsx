@@ -230,7 +230,7 @@ export function SearchTemplateList({
   if (popupTrigger)
     return (
       <Sheet>
-        <SheetTrigger>{popupTrigger}</SheetTrigger>
+        <SheetTrigger className="w-full">{popupTrigger}</SheetTrigger>
         <SheetContent className="sm:max-w-screen-lg p-0">
           <SheetHeader className="bg-background">
             <SheetTitle className="border-b">{InputComp}</SheetTitle>
