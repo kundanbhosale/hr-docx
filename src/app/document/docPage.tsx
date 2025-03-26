@@ -191,10 +191,25 @@ export default function DocPage({
       }
     };
 
+    const disableCopyPaste = (event) => {
+      event.preventDefault();
+      event.preventDefault();
+      toast.error("Copying content is disabled.");
+    };
+    const disableEvent = (event) => event.preventDefault();
+
+    document.addEventListener("contextmenu", disableEvent); // Disable right-click
     document.addEventListener("keydown", noCopy);
 
+    document.addEventListener("copy", disableCopyPaste);
+    document.addEventListener("cut", disableCopyPaste);
+
     return () => {
+      document.removeEventListener("contextmenu", disableEvent);
+
       document.removeEventListener("keydown", noCopy);
+      document.removeEventListener("copy", disableCopyPaste);
+      document.removeEventListener("cut", disableCopyPaste);
     };
   }, []);
 

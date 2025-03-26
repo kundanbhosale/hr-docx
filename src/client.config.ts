@@ -2,38 +2,17 @@
 
 import {
   ArrowLeftCircle,
-  Box,
   CircleHelp,
   CircleUser,
   FileText,
-  Info,
   Layers,
   LayoutDashboard,
   LogOut,
-  Navigation2,
-  Phone,
-  Settings,
   User,
 } from "lucide-react";
 
 export const adminNavs = {
-  primary: [
-    // {
-    //   label: "Dashboard",
-    //   url: "/app",
-    //   icon: ArrowLeftCircle,
-    // },
-    // {
-    //   label: "Templates",
-    //   url: "/admin",
-    //   icon: FileText,
-    // },
-    // {
-    //   label: "Categories",
-    //   url: "/admin/categories",
-    //   icon: Box,
-    // },
-  ],
+  primary: [],
   secondary: [
     {
       label: "Dashboard",
@@ -75,21 +54,6 @@ export const dashboardNavs = {
       url: "/account",
       icon: CircleUser,
     },
-    // {
-    //   label: "Take a Tour",
-    //   url: "#app-tour",
-    //   icon: Navigation2,
-    // },
-    // {
-    //   label: "About us",
-    //   url: "#about",
-    //   icon: Info,
-    // },
-    // {
-    //   label: "Need Help",
-    //   url: "/help",
-    //   icon: Phone,
-    // },
   ],
   secondary: [
     { label: "Sign out", url: "/logout", icon: LogOut },
