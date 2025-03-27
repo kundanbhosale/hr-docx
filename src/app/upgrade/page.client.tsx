@@ -145,6 +145,9 @@ export default function UpgradePage({}) {
 
             <div>
               <h1 className="text-xl font-semibold">
+                <span className="text-muted-foreground text-base line-through">
+                  {formatAmount("INR", Number(p?.og_prices.inr))}
+                </span>{" "}
                 {formatAmount("INR", Number(p?.prices.inr))} /-
               </h1>
               <p>

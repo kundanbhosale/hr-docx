@@ -17,6 +17,9 @@ export const appConfig = {
       prices: {
         inr: 299,
       },
+      og_prices: {
+        inr: 549,
+      },
 
       features: {
         documents: 1,
@@ -34,6 +37,9 @@ export const appConfig = {
       id: env.IN_PROD ? "plan_Q6DNQfQF1aTp6s" : "plan_PxUR9JHBuaKCOM",
       prices: {
         inr: 2999,
+      },
+      og_prices: {
+        inr: 4499,
       },
       interval: {
         value: 3,
@@ -57,6 +63,9 @@ export const appConfig = {
       prices: {
         inr: 4999,
       },
+      og_prices: {
+        inr: 8499,
+      },
       interval: {
         value: 6,
         frequency: "months",
@@ -78,6 +87,9 @@ export const appConfig = {
       id: env.IN_PROD ? "plan_Q6DMJymKWmP8hN" : "plan_Q6DMJymKWmP8hN",
       prices: {
         inr: 9999,
+      },
+      og_prices: {
+        inr: 14999,
       },
       interval: {
         value: 1,
