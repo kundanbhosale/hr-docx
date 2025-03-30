@@ -180,26 +180,26 @@ export default function DocPage({
     };
   }, [sess]);
 
+  const noCopy = (event) => {
+    if (
+      (event.ctrlKey || event.metaKey) &&
+      (event.key.toLowerCase() === "a" || event.key.toLowerCase() === "c")
+    ) {
+      event.preventDefault();
+      toast.error("Ctrl + A or Ctrl + C is disabled.");
+    }
+
+    if (
+      event.key === "F12" ||
+      (event.ctrlKey && event.shiftKey && event.key === "I") || // Ctrl+Shift+I
+      (event.ctrlKey && event.key === "U")
+    ) {
+      event.preventDefault();
+      toast.error("Dev tools disabled!");
+    }
+  };
+
   useEffect(() => {
-    const noCopy = (event) => {
-      if (
-        (event.ctrlKey || event.metaKey) &&
-        (event.key.toLowerCase() === "a" || event.key.toLowerCase() === "c")
-      ) {
-        event.preventDefault();
-        toast.error("Ctrl + A or Ctrl + C is disabled.");
-      }
-
-      if (
-        event.key === "F12" ||
-        (event.ctrlKey && event.shiftKey && event.key === "I") || // Ctrl+Shift+I
-        (event.ctrlKey && event.key === "U")
-      ) {
-        event.preventDefault();
-        toast.error("Dev tools disabled!");
-      }
-    };
-
     const disableCopyPaste = (event) => {
       event.preventDefault();
       event.preventDefault();
@@ -209,14 +209,14 @@ export default function DocPage({
 
     document.addEventListener("contextmenu", disableEvent); // Disable right-click
     document.addEventListener("keydown", noCopy);
-    document.addEventListener("selectstart", disableEvent); // Disable text selection
+    // document.addEventListener("selectstart", disableEvent); // Disable text selection
 
     document.addEventListener("copy", disableCopyPaste);
     document.addEventListener("cut", disableCopyPaste);
 
     return () => {
       document.removeEventListener("contextmenu", disableEvent);
-      document.removeEventListener("selectstart", disableEvent);
+      // document.removeEventListener("selectstart", disableEvent);
       document.removeEventListener("keydown", noCopy);
       document.removeEventListener("copy", disableCopyPaste);
       document.removeEventListener("cut", disableCopyPaste);
