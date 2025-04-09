@@ -37,11 +37,11 @@ export const signIn = async (
           otp: opts.otp!,
         })
         .then((r) => {
+          console.log(r);
           if (!r.data?.user) {
             throw new ClientError("Failed to signin");
           }
-
-          routeCb(opts.callbackURL || "/");
+          return routeCb && routeCb(opts.callbackURL || "/");
         })
         .catch((e) => {
           throw e;
