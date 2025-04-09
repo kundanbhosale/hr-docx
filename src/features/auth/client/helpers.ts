@@ -37,7 +37,7 @@ export const signIn = async (
           otp: opts.otp!,
         })
         .then((r) => {
-          console.log(r);
+          // console.log({ r });
           if (!r.data?.user) {
             throw new ClientError("Failed to signin");
           }

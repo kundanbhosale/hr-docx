@@ -45,7 +45,6 @@ export function LoginForm({
   const [callbackURL] = useQueryState("cb", parseAsString.withDefault("/"));
 
   useEffect(() => {
-    console.log(data);
     if (data?.user.id) {
       router.push(callbackURL || "/");
     }
