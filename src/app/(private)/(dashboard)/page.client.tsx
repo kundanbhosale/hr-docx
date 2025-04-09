@@ -35,7 +35,10 @@ const PageClient = (
 
   return (
     <>
-      <DashboardHeader title={sess?.user.name || ""} label="Hello" />
+      <DashboardHeader
+        title={sess?.user.name.split("@")[0] || ""}
+        label="Hello"
+      />
       <DashboardBody className="p-8 grid grid-cols-[auto_400px] gap-8">
         <div className="space-y-8">
           <div className="grid grid-cols-4 gap-8 h-fit">
