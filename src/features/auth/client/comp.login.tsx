@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,36 +10,55 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FormEvent, useTransition } from "react";
+import { FormEvent, useEffect, useState, useTransition } from "react";
 import { signIn } from "./helpers";
 import { toast } from "sonner";
 import { parseAsString, useQueryState } from "nuqs";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useAuthStore } from "./store";
 import { env } from "@/app/env";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { authClient } from ".";
+import { useRouter } from "next/navigation";
+import Loading from "@/components/ui/loading";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const { data, isPending } = authClient.useSession();
+  const router = useRouter();
+
   const [pending, trans] = useTransition();
   const [verifyEmail, setVerifyEmail] = useQueryState(
     "verify-email",
     parseAsString
   );
+
+  const [otp, setOtp] = useState("");
+
   const [callbackURL] = useQueryState("cb", parseAsString.withDefault("/"));
 
-  // useEffect(() => {
-  //   update({ callback: url });
-  // }, [url]);
+  useEffect(() => {
+    console.log(data);
+    if (data?.user.id) {
+      router.push(callbackURL || "/");
+    }
+  }, [data, isPending]);
 
   const handler = (p: Parameters<typeof signIn>) => {
     trans(async () => {
-      await signIn(p[0], { ...p[1], callbackURL })
+      await signIn(p[0], { ...p[1], callbackURL }, (v: string) =>
+        router.replace(v)
+      )
         .then(() => {
-          if (p[0] === "magic-link" && p[1]?.email) {
+          setOtp("");
+          if (p[0] === "otp" && p[1]?.email) {
             return setVerifyEmail(p[1]?.email);
           }
         })
@@ -54,37 +73,65 @@ export function LoginForm({
     const formdata = new FormData(e.currentTarget);
     const email = formdata.get("email")?.toString();
     if (!email) return toast.error("Invalid email: " + email);
-    handler(["magic-link", { email }]);
+    handler(["otp", { email }]);
   };
 
   if (verifyEmail) {
     return (
-      <Card className="pt-10">
+      <Card className="py-10 relative">
+        {pending && (
+          <div className="absolute h-full w-full m-auto bg-background z-50 flex justify-center items-center">
+            <Loading />
+          </div>
+        )}
         <CardHeader className="text-center">
           <CardTitle className="text-xl flex items-center justify-center flex-col">
             <>
               <CheckCircle2 className="size-16 mb-6" />
-              <span>Link Sent</span>
+              <span>Sign-in OTP Sent</span>
             </>
           </CardTitle>
-          <CardDescription>
-            We&apos;ve sent you an email with login link on {verifyEmail}.
+          <CardDescription className="max-w-sm px-5">
+            We&apos;ve sent you an OTP on {verifyEmail}.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center my-10 justify-center gap-4">
-          <Link
-            href="/login"
-            className={cn(buttonVariants({ variant: "outline", size: "lg" }))}
+        <CardContent className="flex flex-col items-center justify-center gap-4 space-y-8">
+          <InputOTP
+            maxLength={6}
+            onComplete={(c) =>
+              handler(["signin-otp", { email: verifyEmail, otp: c }])
+            }
+            onChange={(v) => setOtp(v)}
+            value={otp}
           >
-            <ArrowLeft /> Go Back
-          </Link>
-          <Button
-            variant={"secondary"}
-            size={"lg"}
-            onClick={() => handler(["magic-link", { email: verifyEmail }])}
-          >
-            Resend Email
-          </Button>
+            <InputOTPGroup>
+              <InputOTPSlot index={0} />
+              <InputOTPSlot index={1} />
+              <InputOTPSlot index={2} />
+              {/* </InputOTPGroup>
+            <InputOTPSeparator />
+            <InputOTPGroup> */}
+              <InputOTPSlot index={3} />
+              <InputOTPSlot index={4} />
+              <InputOTPSlot index={5} />
+            </InputOTPGroup>
+          </InputOTP>
+          <div className="flex gap-4">
+            <Button
+              variant={"outline"}
+              size={"lg"}
+              onClick={() => setVerifyEmail("")}
+            >
+              <ArrowLeft />
+            </Button>
+            <Button
+              variant={"secondary"}
+              size={"lg"}
+              onClick={() => handler(["otp", { email: verifyEmail }])}
+            >
+              Resend OTP
+            </Button>
+          </div>
         </CardContent>
       </Card>
     );
@@ -92,7 +139,7 @@ export function LoginForm({
 
   return (
     <div className="flex w-full max-w-sm flex-col gap-6 m-auto">
-      <a href="" className="flex items-center gap-2 self-center font-medium">
+      <div className="flex items-center gap-2 self-center font-medium">
         {/* <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <GalleryVerticalEnd className="size-4" />
             </div>
@@ -100,7 +147,7 @@ export function LoginForm({
         <Link href={env.WWW_URL}>
           <Image src="/app/logo.png" alt="HR Docx" width={150} height={44} />
         </Link>
-      </a>
+      </div>
       <div className={cn("flex flex-col gap-6", className)} {...props}>
         <Card>
           <CardHeader className="text-center">

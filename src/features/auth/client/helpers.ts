@@ -2,30 +2,50 @@ import { ClientError } from "@/lib/error";
 import { authClient } from "../client";
 
 export const signIn = async (
-  type: "google" | "microsoft" | "magic-link",
-  opts?: { email?: string; callbackURL?: string }
+  type: "google" | "microsoft" | "otp" | "signin-otp",
+  opts?: { email?: string; callbackURL?: string; otp?: string },
+  routeCb?: (v: string) => void
 ) => {
   console.log(opts);
   if (!opts?.callbackURL) {
-    opts.callbackURL = "/org";
+    opts = {
+      ...opts,
+      callbackURL: "/org",
+    };
   }
   switch (type) {
-    case "magic-link":
-      return await authClient.signIn
-        .magicLink({
+    case "otp":
+      return await authClient.emailOtp
+        .sendVerificationOtp({
           email: opts!.email!,
-          callbackURL: opts!.callbackURL,
+          type: "sign-in",
+          // callbackURL: opts!.callbackURL,
         })
         .then((r) => {
-          if (r.data?.status === false) {
-            throw new ClientError("Failed to send login link");
+          if (r.data?.success === false) {
+            throw new ClientError("Failed to send login OTP");
           }
           return true;
         })
         .catch((e) => {
           throw e;
         });
+    case "signin-otp":
+      return await authClient.signIn
+        .emailOtp({
+          email: opts.email!,
+          otp: opts.otp!,
+        })
+        .then((r) => {
+          if (!r.data?.user) {
+            throw new ClientError("Failed to signin");
+          }
 
+          routeCb(opts.callbackURL || "/");
+        })
+        .catch((e) => {
+          throw e;
+        });
     case "google":
       return await authClient.signIn
         .social({
@@ -51,12 +71,4 @@ export const signIn = async (
     default:
       throw new ClientError("Invalid signin action");
   }
-};
-
-export const verifyMagicLink = async (token: string) => {
-  return await authClient.magicLink.verify({
-    query: {
-      token,
-    },
-  });
 };

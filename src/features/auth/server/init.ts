@@ -4,7 +4,7 @@ import { pool } from "@/_server/db";
 import { env } from "@/app/env";
 import { sendTransactionalEmail } from "@/features/mailer/server";
 import { betterAuth, BetterAuthOptions } from "better-auth";
-import { magicLink, organization } from "better-auth/plugins";
+import { emailOTP, organization } from "better-auth/plugins";
 import { ac, admin, member, owner } from "./permission";
 import { afterAuthMiddleware } from "./middleware";
 
@@ -28,12 +28,13 @@ const organizationPlugin = organization({
   },
 });
 
-const magicLinkPlugin = magicLink({
-  sendMagicLink: async ({ email, url }) => {
+const emailOTPPlugin = emailOTP({
+  otpLength: 6,
+  sendVerificationOTP: async ({ email, otp, type }) => {
     const data = await sendTransactionalEmail({
       to: [email],
       subject: "Login to HRDocx",
-      html: `Hello,\nlogin to HRDocx using this link:\n${url}`,
+      html: `Hello,<br/>Login to HRDocx using this OTP:<br/><br/><b>${otp}</b>`,
     });
     console.log(data);
   },
@@ -53,7 +54,7 @@ const socialProviders: BetterAuthOptions["socialProviders"] = {
 export const auth = betterAuth({
   database: pool,
   socialProviders,
-  plugins: [organizationPlugin, magicLinkPlugin],
+  plugins: [organizationPlugin, emailOTPPlugin],
   hooks: {
     after: afterAuthMiddleware,
   },
