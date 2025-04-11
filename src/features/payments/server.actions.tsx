@@ -191,7 +191,11 @@ export const getSubscriptionAndPayments = action(async () => {
 
   const sub = org.metadata.subscription?.id
     ? await razorpay.subscriptions.fetch(org.metadata.subscription.id)
-    : null;
+    : {
+        id: org.metadata.subscription?.id,
+        current_start: org.metadata.subscription?.current_start,
+        current_end: org.metadata.subscription?.current_end,
+      };
 
   const plan = appConfig.plans.find(
     (p) => p.id === org.metadata.subscription?.plan_id
