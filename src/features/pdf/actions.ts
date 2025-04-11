@@ -68,8 +68,8 @@ export const createPDF = action(async (html: string) => {
     margin: { top: "1cm", right: "1cm", bottom: "1cm", left: "1cm" },
   });
   await browser.close();
-  const creditsLeft =
-    (org.metadata.credits && Number(org.metadata.credits) - 1) || 0;
+  const creditsLeft = Number(org?.metadata?.credits?.download || 0) - 1;
+
   await db
     .updateTable("orgs.list")
     .set({
